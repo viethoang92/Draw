@@ -3,6 +3,7 @@ package mydraw;
 
 import java.awt.Choice;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -57,44 +58,83 @@ public class Draw {
 			autoDraw();
 		}
 	}
-	
+
 	/**
+<<<<<<< HEAD
 	 * Returns current foreground color.
 	 * 
 	 * @return current foreground color
+=======
+	 * Gibt die aktuelle Zeichenfarbe zur�ck.
+	 * 
+	 * @return aktuelle Zeichenfarbe
+	 * @throws ColorException ungültige Farbe
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 	 */
-	public String getFGColor() {
-		return window.color.toString();
+	public String getFGColor() throws ColorException {
+		String color;
+		switch (window.getForeground().toString()) {
+		case "java.awt.Color[r=255,g=0,b=0]":
+			color = "red";
+			break;
+		case "java.awt.Color[r=0,g=0,b=0]":
+			color = "black";
+			break;
+		case "java.awt.Color[r=0,g=255,b=0]":
+			color = "green";
+			break;
+		case "java.awt.Color[r=0,g=0,b=255]":
+			color = "blue";
+			break;
+		default:
+			throw new ColorException();
+		}
+		return color;
 	}
 
 	/**
 	 * Sets foreground color.
 	 * 
+<<<<<<< HEAD
 	 * @param new_color new color to set
 	 * @throws ColorException if color is not in Choice
 	 */
 	public void setFGColor(String new_color) throws ColorException {
 	    
+=======
+	 * @param new_color
+	 *            neue Zeichenfarbe
+	 * @throws ColorException
+	 *             ung�ltige Farbe
+	 */
+	public void setFGColor(String new_color) throws ColorException {
+		Color color = null;
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 		switch (new_color.toLowerCase()) {
 		case "black":
-			window.setForeground(Color.black);
+			color = Color.BLACK;
 			break;
 		case "green":
-			window.setForeground(Color.GREEN);
+			color = Color.GREEN;
 			break;
 		case "red":
-			window.setForeground(Color.RED);
+			color = Color.RED;
 			break;
 		case "blue":
-			window.setForeground(Color.BLUE);
+			color = Color.BLUE;
 			break;
 		default:
 			throw new ColorException();
 		}
+		window.setForeground(color);
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Returns the window width.
+=======
+	 * Gibt die Breite des Fensters zur�ck.
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 	 * 
 	 * @return width of window
 	 */
@@ -103,9 +143,15 @@ public class Draw {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Returns the window height.
 	 * 
 	 * @return height of window
+=======
+	 * Gibt die H�he des Fensters zur�ck.
+	 * 
+	 * @return H�he des Fensters
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 	 */
 	public int getHeight() {
 		return window.getSize().height;
@@ -121,9 +167,16 @@ public class Draw {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Sets the window height.
 	 * 
 	 * @param height height of the window to set
+=======
+	 * Setzt die H�he des Fensters.
+	 * 
+	 * @param height
+	 *            neue H�he des Fensters
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 	 */
 	public void setHeight(int height) {
 		window.setSize(getWidth(), height);
@@ -132,8 +185,15 @@ public class Draw {
 	/**
 	 * Sets background color
 	 * 
+<<<<<<< HEAD
 	 * @param new_color new background color to be set
 	 * @throws ColorException if new color is not in the set
+=======
+	 * @param new_color
+	 *            neue Hintergrundfarbe
+	 * @throws ColorException
+	 *             ung�ltige Farbe
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 	 */
 	public void setBGColor(String new_color) throws ColorException {
 		Color color = null;
@@ -156,6 +216,7 @@ public class Draw {
 		default:
 			throw new ColorException();
 		}
+		window.getContentPane().setBackground(color);
 		window.setBackground(color);
 	}
 
@@ -163,9 +224,31 @@ public class Draw {
 	 * Gibt die Hintergrundfarbe des Fensters zur�ck.
 	 * 
 	 * @return Hintergrundfarbe des Fensters
+	 * @throws ColorException unbekannte Farbe
 	 */
-	public String getBGColor() {
-		return window.getBackground().toString();
+	public String getBGColor() throws ColorException {
+
+		String color;
+		switch (window.getBackground().toString()) {
+		case "java.awt.Color[r=255,g=0,b=0]":
+			color = "red";
+			break;
+		case "java.awt.Color[r=0,g=0,b=0]":
+			color = "black";
+			break;
+		case "java.awt.Color[r=0,g=255,b=0]":
+			color = "green";
+			break;
+		case "java.awt.Color[r=0,g=0,b=255]":
+			color = "blue";
+			break;
+		case "java.awt.Color[r=255,g=255,b=255]":
+			color = "white";
+			break;
+		default:
+			throw new ColorException();
+		}
+		return color; 
 	}
 
 	/**
@@ -177,10 +260,9 @@ public class Draw {
 	 *            rechte, untere Ecke
 	 */
 	public void drawRectangle(Point upper_left, Point lower_right) {
-		Graphics g = window.getGraphics();
 		int width = lower_right.x - upper_left.x;
 		int height = lower_right.y - upper_left.y;
-		g.drawRect(upper_left.x, upper_left.y, width, height);
+		window.getGraphics().drawRect(upper_left.x, upper_left.y, width, height);
 	}
 
 	/**
@@ -192,10 +274,9 @@ public class Draw {
 	 *            rechte, untere Ecke
 	 */
 	public void drawOval(Point upper_left, Point lower_right) {
-		Graphics g = window.getGraphics();
 		int width = lower_right.x - upper_left.x;
 		int height = lower_right.y - upper_left.y;
-		g.drawOval(upper_left.x, upper_left.y, width, height);
+		window.getGraphics().drawOval(upper_left.x, upper_left.y, width, height);
 	}
 
 	/**
@@ -212,8 +293,7 @@ public class Draw {
 			x[i] = p.x;
 			y[i] = p.y;
 		}
-		Graphics g = window.getGraphics();
-		g.drawPolyline(x, y, points.size());
+		window.getGraphics().drawPolyline(x, y, points.size());
 	}
 
 	/**
@@ -239,15 +319,31 @@ public class Draw {
 	 */
 	public void autoDraw() {
 		try {
+			
+			setBGColor("black");
+			System.out.println(getBGColor());
+			
 			setFGColor("Red");
+			//System.out.println(getFGColor());
 			drawRectangle(new Point(100, 100), new Point(300, 300));
 			setFGColor("Blue");
+<<<<<<< HEAD
 			System.out.println(getFGColor());
 			//
 			//drawOval(new Point(50, 50), new Point(200, 200));
 			//setFGColor("Green");
 			//List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
 			//drawPolyLine(list);
+=======
+			
+			//System.out.println(getFGColor());
+			drawOval(new Point(50, 50), new Point(200, 200));
+			setFGColor("Green");
+			//System.out.println(getFGColor());
+			List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
+			drawPolyLine(list);
+			
+>>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 		} catch (ColorException e) {
 			JOptionPane.showMessageDialog(window, e.getMessage());
 		}
@@ -256,19 +352,21 @@ public class Draw {
 	/**
 	 * Speichert ein Bild als Datei ab.
 	 * 
-	 * @param img abzuspeicherndes Bild
-	 * @param filename Dateiname
+	 * @param img
+	 *            abzuspeicherndes Bild
+	 * @param filename
+	 *            Dateiname
 	 * @throws IOException
 	 */
 	public void writeImage(Image img, String filename) throws IOException {
 		MyBMPFile.write(filename, img);
 	}
-	
-	
+
 	/**
 	 * Liest eine Bilddatei ein.
 	 * 
-	 * @param filename Dateiname
+	 * @param filename
+	 *            Dateiname
 	 * @return Image
 	 * @throws IOException
 	 */
@@ -293,6 +391,7 @@ class DrawGUIs extends JFrame {
 		super("Draw"); // Create the window
 		app = application; // Remember the application reference
 		color = Color.black; // the current drawing color
+
 
 		// selector for drawing modes
 		Choice shape_chooser = new Choice();
