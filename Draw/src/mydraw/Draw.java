@@ -3,6 +3,7 @@ package mydraw;
 
 import java.awt.Choice;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -55,14 +56,32 @@ public class Draw {
 			autoDraw();
 		}
 	}
-	
+
 	/**
-	 * Gibt die aktuelle Zeichenfarbe zurück.
+	 * Gibt die aktuelle Zeichenfarbe zurï¿½ck.
 	 * 
 	 * @return aktuelle Zeichenfarbe
+	 * @throws ColorException ungÃ¼ltige Farbe
 	 */
-	public String getFGColor() {
-		return window.color.toString();
+	public String getFGColor() throws ColorException {
+		String color;
+		switch (window.getForeground().toString()) {
+		case "java.awt.Color[r=255,g=0,b=0]":
+			color = "red";
+			break;
+		case "java.awt.Color[r=0,g=0,b=0]":
+			color = "black";
+			break;
+		case "java.awt.Color[r=0,g=255,b=0]":
+			color = "green";
+			break;
+		case "java.awt.Color[r=0,g=0,b=255]":
+			color = "blue";
+			break;
+		default:
+			throw new ColorException();
+		}
+		return color;
 	}
 
 	/**
@@ -71,29 +90,31 @@ public class Draw {
 	 * @param new_color
 	 *            neue Zeichenfarbe
 	 * @throws ColorException
-	 *             ungültige Farbe
+	 *             ungï¿½ltige Farbe
 	 */
 	public void setFGColor(String new_color) throws ColorException {
+		Color color = null;
 		switch (new_color.toLowerCase()) {
 		case "black":
-			window.setForeground(Color.black);
+			color = Color.BLACK;
 			break;
 		case "green":
-			window.setForeground(Color.GREEN);
+			color = Color.GREEN;
 			break;
 		case "red":
-			window.setForeground(Color.RED);
+			color = Color.RED;
 			break;
 		case "blue":
-			window.setForeground(Color.BLUE);
+			color = Color.BLUE;
 			break;
 		default:
 			throw new ColorException();
 		}
+		window.setForeground(color);
 	}
 
 	/**
-	 * Gibt die Breite des Fensters zurück.
+	 * Gibt die Breite des Fensters zurï¿½ck.
 	 * 
 	 * @return Breite des Fensters
 	 */
@@ -102,9 +123,9 @@ public class Draw {
 	}
 
 	/**
-	 * Gibt die Höhe des Fensters zurück.
+	 * Gibt die Hï¿½he des Fensters zurï¿½ck.
 	 * 
-	 * @return Höhe des Fensters
+	 * @return Hï¿½he des Fensters
 	 */
 	public int getHeight() {
 		return window.getSize().height;
@@ -121,10 +142,10 @@ public class Draw {
 	}
 
 	/**
-	 * Setzt die Höhe des Fensters.
+	 * Setzt die Hï¿½he des Fensters.
 	 * 
 	 * @param height
-	 *            neue Höhe des Fensters
+	 *            neue Hï¿½he des Fensters
 	 */
 	public void setHeight(int height) {
 		window.setSize(getWidth(), height);
@@ -136,7 +157,7 @@ public class Draw {
 	 * @param new_color
 	 *            neue Hintergrundfarbe
 	 * @throws ColorException
-	 *             ungültige Farbe
+	 *             ungï¿½ltige Farbe
 	 */
 	public void setBGColor(String new_color) throws ColorException {
 		Color color;
@@ -159,16 +180,39 @@ public class Draw {
 		default:
 			throw new ColorException();
 		}
+		window.getContentPane().setBackground(color);
 		window.setBackground(color);
 	}
 
 	/**
-	 * Gibt die Hintergrundfarbe des Fensters zurück.
+	 * Gibt die Hintergrundfarbe des Fensters zurï¿½ck.
 	 * 
 	 * @return Hintergrundfarbe des Fensters
+	 * @throws ColorException unbekannte Farbe
 	 */
-	public String getBGColor() {
-		return window.getBackground().toString();
+	public String getBGColor() throws ColorException {
+
+		String color;
+		switch (window.getBackground().toString()) {
+		case "java.awt.Color[r=255,g=0,b=0]":
+			color = "red";
+			break;
+		case "java.awt.Color[r=0,g=0,b=0]":
+			color = "black";
+			break;
+		case "java.awt.Color[r=0,g=255,b=0]":
+			color = "green";
+			break;
+		case "java.awt.Color[r=0,g=0,b=255]":
+			color = "blue";
+			break;
+		case "java.awt.Color[r=255,g=255,b=255]":
+			color = "white";
+			break;
+		default:
+			throw new ColorException();
+		}
+		return color; 
 	}
 
 	/**
@@ -180,10 +224,9 @@ public class Draw {
 	 *            rechte, untere Ecke
 	 */
 	public void drawRectangle(Point upper_left, Point lower_right) {
-		Graphics g = window.getGraphics();
 		int width = lower_right.x - upper_left.x;
 		int height = lower_right.y - upper_left.y;
-		g.drawRect(upper_left.x, upper_left.y, width, height);
+		window.getGraphics().drawRect(upper_left.x, upper_left.y, width, height);
 	}
 
 	/**
@@ -195,10 +238,9 @@ public class Draw {
 	 *            rechte, untere Ecke
 	 */
 	public void drawOval(Point upper_left, Point lower_right) {
-		Graphics g = window.getGraphics();
 		int width = lower_right.x - upper_left.x;
 		int height = lower_right.y - upper_left.y;
-		g.drawOval(upper_left.x, upper_left.y, width, height);
+		window.getGraphics().drawOval(upper_left.x, upper_left.y, width, height);
 	}
 
 	/**
@@ -215,12 +257,11 @@ public class Draw {
 			x[i] = p.x;
 			y[i] = p.y;
 		}
-		Graphics g = window.getGraphics();
-		g.drawPolyline(x, y, points.size());
+		window.getGraphics().drawPolyline(x, y, points.size());
 	}
 
 	/**
-	 * Gibt die Zeichnung zurück.
+	 * Gibt die Zeichnung zurï¿½ck.
 	 * 
 	 * @return Zeichnung
 	 */
@@ -229,7 +270,7 @@ public class Draw {
 	}
 
 	/**
-	 * Setzt die Zeichenfläche zurück.
+	 * Setzt die Zeichenflï¿½che zurï¿½ck.
 	 */
 	public void clear() {
 		Graphics g = window.getGraphics();
@@ -242,13 +283,22 @@ public class Draw {
 	 */
 	public void autoDraw() {
 		try {
+			
+			setBGColor("black");
+			System.out.println(getBGColor());
+			
 			setFGColor("Red");
+			//System.out.println(getFGColor());
 			drawRectangle(new Point(100, 100), new Point(300, 300));
 			setFGColor("Blue");
+			
+			//System.out.println(getFGColor());
 			drawOval(new Point(50, 50), new Point(200, 200));
 			setFGColor("Green");
+			//System.out.println(getFGColor());
 			List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
 			drawPolyLine(list);
+			
 		} catch (ColorException e) {
 			JOptionPane.showMessageDialog(window, e.getMessage());
 		}
@@ -257,19 +307,21 @@ public class Draw {
 	/**
 	 * Speichert ein Bild als Datei ab.
 	 * 
-	 * @param img abzuspeicherndes Bild
-	 * @param filename Dateiname
+	 * @param img
+	 *            abzuspeicherndes Bild
+	 * @param filename
+	 *            Dateiname
 	 * @throws IOException
 	 */
 	public void writeImage(Image img, String filename) throws IOException {
 		MyBMPFile.write(filename, img);
 	}
-	
-	
+
 	/**
 	 * Liest eine Bilddatei ein.
 	 * 
-	 * @param filename Dateiname
+	 * @param filename
+	 *            Dateiname
 	 * @return Image
 	 * @throws IOException
 	 */
@@ -294,6 +346,7 @@ class DrawGUIs extends JFrame {
 		super("Draw"); // Create the window
 		app = application; // Remember the application reference
 		color = Color.black; // the current drawing color
+
 
 		// selector for drawing modes
 		Choice shape_chooser = new Choice();
