@@ -27,8 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.sun.glass.ui.Window;
-
 /** The application class. Processes high-level commands sent by GUI */
 public class Draw {
 	/** main entry point. Just create an instance of this application class */
@@ -42,6 +40,7 @@ public class Draw {
 	}
 
 	protected DrawGUIs window; // chg
+	
 	/** This is the application method that processes commands sent by the GUI */
 	public void doCommand(String command) {
 		if (command.equals("clear")) { // clear the GUI window
