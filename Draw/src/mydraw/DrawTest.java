@@ -1,9 +1,8 @@
 package mydraw;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class DrawTest {
 	private Draw window;
@@ -14,7 +13,7 @@ public class DrawTest {
 	}
 	
 	@Test
-	public void TestFGColor() throws ColorException
+	public void TestSettersAndGetters() throws ColorException
 	{
 		window.setFGColor("blue");
 		assertEquals("blue", window.getFGColor());

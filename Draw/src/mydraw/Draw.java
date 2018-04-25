@@ -3,7 +3,6 @@ package mydraw;
 
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -95,21 +94,11 @@ public class Draw {
 	/**
 	 * Sets foreground color.
 	 * 
-<<<<<<< HEAD
 	 * @param new_color new color to set
 	 * @throws ColorException if color is not in Choice
 	 */
 	public void setFGColor(String new_color) throws ColorException {
-	    
-=======
-	 * @param new_color
-	 *            neue Zeichenfarbe
-	 * @throws ColorException
-	 *             ung�ltige Farbe
-	 */
-	public void setFGColor(String new_color) throws ColorException {
 		Color color = null;
->>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 		switch (new_color.toLowerCase()) {
 		case "black":
 			color = Color.BLACK;
@@ -320,30 +309,14 @@ public class Draw {
 	public void autoDraw() {
 		try {
 			
-			setBGColor("black");
-			System.out.println(getBGColor());
-			
+			setBGColor("black");			
 			setFGColor("Red");
-			//System.out.println(getFGColor());
 			drawRectangle(new Point(100, 100), new Point(300, 300));
-			setFGColor("Blue");
-<<<<<<< HEAD
-			System.out.println(getFGColor());
-			//
-			//drawOval(new Point(50, 50), new Point(200, 200));
-			//setFGColor("Green");
-			//List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
-			//drawPolyLine(list);
-=======
-			
-			//System.out.println(getFGColor());
+			setFGColor("Blue");			
 			drawOval(new Point(50, 50), new Point(200, 200));
 			setFGColor("Green");
-			//System.out.println(getFGColor());
 			List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
 			drawPolyLine(list);
-			
->>>>>>> 9b4eec82e78cb257bf14bf59fc3b350457faa479
 		} catch (ColorException e) {
 			JOptionPane.showMessageDialog(window, e.getMessage());
 		}
