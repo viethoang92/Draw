@@ -25,6 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import com.sun.glass.ui.Window;
 
 /** The application class. Processes high-level commands sent by GUI */
 public class Draw {
@@ -39,7 +42,6 @@ public class Draw {
 	}
 
 	protected DrawGUIs window; // chg
-
 	/** This is the application method that processes commands sent by the GUI */
 	public void doCommand(String command) {
 		if (command.equals("clear")) { // clear the GUI window
@@ -57,23 +59,22 @@ public class Draw {
 	}
 	
 	/**
-	 * Gibt die aktuelle Zeichenfarbe zurück.
+	 * Returns current foreground color.
 	 * 
-	 * @return aktuelle Zeichenfarbe
+	 * @return current foreground color
 	 */
 	public String getFGColor() {
 		return window.color.toString();
 	}
 
 	/**
-	 * Setzt die aktuelle Zeichenfarbe.
+	 * Sets foreground color.
 	 * 
-	 * @param new_color
-	 *            neue Zeichenfarbe
-	 * @throws ColorException
-	 *             ungültige Farbe
+	 * @param new_color new color to set
+	 * @throws ColorException if color is not in Choice
 	 */
 	public void setFGColor(String new_color) throws ColorException {
+	    
 		switch (new_color.toLowerCase()) {
 		case "black":
 			window.setForeground(Color.black);
@@ -93,53 +94,49 @@ public class Draw {
 	}
 
 	/**
-	 * Gibt die Breite des Fensters zurück.
+	 * Returns the window width.
 	 * 
-	 * @return Breite des Fensters
+	 * @return width of window
 	 */
 	public int getWidth() {
 		return window.getSize().width;
 	}
 
 	/**
-	 * Gibt die Höhe des Fensters zurück.
+	 * Returns the window height.
 	 * 
-	 * @return Höhe des Fensters
+	 * @return height of window
 	 */
 	public int getHeight() {
 		return window.getSize().height;
 	}
 
 	/**
-	 * Setzt die Breite des Fensters.
+	 * Sets the window width.
 	 * 
-	 * @param width
-	 *            neue Breite des Fensters
+	 * @param width width of window to set
 	 */
 	public void setWidth(int width) {
 		window.setSize(width, getHeight());
 	}
 
 	/**
-	 * Setzt die Höhe des Fensters.
+	 * Sets the window height.
 	 * 
-	 * @param height
-	 *            neue Höhe des Fensters
+	 * @param height height of the window to set
 	 */
 	public void setHeight(int height) {
 		window.setSize(getWidth(), height);
 	}
 
 	/**
-	 * Setzt die Hintergrundfarbe des Fensters.
+	 * Sets background color
 	 * 
-	 * @param new_color
-	 *            neue Hintergrundfarbe
-	 * @throws ColorException
-	 *             ungültige Farbe
+	 * @param new_color new background color to be set
+	 * @throws ColorException if new color is not in the set
 	 */
 	public void setBGColor(String new_color) throws ColorException {
-		Color color;
+		Color color = null;
 		switch (new_color.toLowerCase()) {
 		case "black":
 			color = Color.black;
@@ -163,7 +160,7 @@ public class Draw {
 	}
 
 	/**
-	 * Gibt die Hintergrundfarbe des Fensters zurück.
+	 * Gibt die Hintergrundfarbe des Fensters zurï¿½ck.
 	 * 
 	 * @return Hintergrundfarbe des Fensters
 	 */
@@ -220,7 +217,7 @@ public class Draw {
 	}
 
 	/**
-	 * Gibt die Zeichnung zurück.
+	 * Gibt die Zeichnung zurï¿½ck.
 	 * 
 	 * @return Zeichnung
 	 */
@@ -229,7 +226,7 @@ public class Draw {
 	}
 
 	/**
-	 * Setzt die Zeichenfläche zurück.
+	 * Setzt die Zeichenflï¿½che zurï¿½ck.
 	 */
 	public void clear() {
 		Graphics g = window.getGraphics();
@@ -245,10 +242,12 @@ public class Draw {
 			setFGColor("Red");
 			drawRectangle(new Point(100, 100), new Point(300, 300));
 			setFGColor("Blue");
-			drawOval(new Point(50, 50), new Point(200, 200));
-			setFGColor("Green");
-			List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
-			drawPolyLine(list);
+			System.out.println(getFGColor());
+			//
+			//drawOval(new Point(50, 50), new Point(200, 200));
+			//setFGColor("Green");
+			//List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
+			//drawPolyLine(list);
 		} catch (ColorException e) {
 			JOptionPane.showMessageDialog(window, e.getMessage());
 		}
