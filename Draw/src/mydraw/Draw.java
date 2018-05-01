@@ -248,7 +248,7 @@ public class Draw
 	 * @throws IOException
 	 */
 	public Image readImage(String filename) throws IOException {
-		return ImageIO.read(new File(filename.toString()));
+		return ImageIO.read(new File(filename));
 	}
 
 	private String getKey(Color color)

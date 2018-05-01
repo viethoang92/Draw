@@ -44,7 +44,6 @@ public class DrawTest
     @Test
     public void testGetWidth() throws ColorException
     {
-        System.out.println(window.getWidth());
         assertEquals(500, window.getWidth());
     }
 
