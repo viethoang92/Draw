@@ -13,7 +13,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Draw {
-	protected DrawGUIs window;
+	private final DrawGUIs window;
 
 	public Draw() {
 		window = new DrawGUIs(this);
