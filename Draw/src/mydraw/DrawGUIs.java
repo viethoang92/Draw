@@ -69,7 +69,7 @@ public class DrawGUIs extends JFrame {
 		shape_chooser.add("Scribble");
 		shape_chooser.add("Rectangle");
 		shape_chooser.add("Oval");
-		shape_chooser.addItemListener(new ShapeManager(panel));
+		shape_chooser.addItemListener(new ShapeManager(panel, this));
 
 		// selector for drawing colors
 		final Choice color_chooser = new Choice();
@@ -198,177 +198,177 @@ public class DrawGUIs extends JFrame {
 		}
 	}
 
-	// this class determines how mouse events are to be interpreted,
-	// depending on the shape mode currently set
-	class ShapeManager implements ItemListener {
-		private final JPanel panel;
-
-		private final ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
-		private final RectangleDrawer rectDrawer = new RectangleDrawer();
-		private final OvalDrawer ovalDrawer = new OvalDrawer();
-
-		private ShapeDrawer currentDrawer;
-
-		private final Map<String, ShapeDrawer> map = new HashMap<String, ShapeDrawer>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put("Scribble", scribbleDrawer);
-				put("Rectangle", rectDrawer);
-				put("Oval", ovalDrawer);
-			}
-		};
-
-		public ShapeManager(JPanel itsPanel) {
-			// drawing panel
-			panel = itsPanel;
-			// default: scribble mode
-			currentDrawer = scribbleDrawer;
-			// activate scribble drawer
-			panel.addMouseListener(currentDrawer);
-			panel.addMouseMotionListener(currentDrawer);
-
-		}
-
-		abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				/* ignore */ }
-		}
-
-		// if this class is active, the mouse is interpreted as a pen
-		class ScribbleDrawer extends ShapeDrawer {
-			int lastx, lasty;
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				lastx = e.getX();
-				lasty = e.getY();
-			}
-
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				final Graphics g = panel.getGraphics();
-				final int x = e.getX(), y = e.getY();
-				g.setColor(color);
-				g.setPaintMode();
-				g.drawLine(lastx, lasty, x, y);
-
-				final Graphics gb = bImg.createGraphics();
-				gb.setColor(color);
-				gb.setPaintMode();
-				gb.drawLine(lastx, lasty, x, y);
-				lastx = x;
-				lasty = y;
-			}
-		}
-
-		// if this class is active, rectangles are drawn
-		class RectangleDrawer extends ShapeDrawer {
-			int pressx, pressy;
-			int lastx = -1, lasty = -1;
-
-			// mouse pressed => fix first corner of rectangle
-			@Override
-			public void mousePressed(MouseEvent e) {
-				pressx = e.getX();
-				pressy = e.getY();
-			}
-
-			// mouse released => fix second corner of rectangle
-			// and draw the resulting shape
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				final Graphics g = panel.getGraphics();
-				final Graphics gb = bImg.createGraphics();
-				if (lastx != -1) {
-					// first undraw a rubber rect
-					g.setXORMode(color);
-					g.setColor(panel.getBackground());
-					doDraw(pressx, pressy, lastx, lasty, g);
-
-					gb.setXORMode(color);
-					gb.setColor(panel.getBackground());
-					doDraw(pressx, pressy, lastx, lasty, gb);
-					lastx = -1;
-					lasty = -1;
-				}
-				// these commands finish the rubberband mode
-				g.setPaintMode();
-				g.setColor(color);
-				// draw the final rectangle
-				doDraw(pressx, pressy, e.getX(), e.getY(), g);
-
-				gb.setPaintMode();
-				gb.setColor(color);
-				// draw the final rectangle
-				doDraw(pressx, pressy, e.getX(), e.getY(), gb);
-			}
-
-			// mouse released => temporarily set second corner of rectangle
-			// draw the resulting shape in "rubber-band mode"
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				final Graphics g = panel.getGraphics();
-				// these commands set the rubberband mode
-				g.setXORMode(color);
-				g.setColor(panel.getBackground());
-				if (lastx != -1) {
-					// first undraw previous rubber rect
-					doDraw(pressx, pressy, lastx, lasty, g);
-				}
-				lastx = e.getX();
-				lasty = e.getY();
-				// draw new rubber rect
-				doDraw(pressx, pressy, lastx, lasty, g);
-			}
-
-			public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-				// calculate upperleft and width/height of rectangle
-				final int x = Math.min(x0, x1);
-				final int y = Math.min(y0, y1);
-				final int w = Math.abs(x1 - x0);
-				final int h = Math.abs(y1 - y0);
-				// draw rectangle
-				g.drawRect(x, y, w, h);
-			}
-		}
-
-		// if this class is active, ovals are drawn
-		class OvalDrawer extends RectangleDrawer {
-			@Override
-			public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-				final int x = Math.min(x0, x1);
-				final int y = Math.min(y0, y1);
-				final int w = Math.abs(x1 - x0);
-				final int h = Math.abs(y1 - y0);
-				// draw oval instead of rectangle
-				g.drawOval(x, y, w, h);
-			}
-		}
-
-		// reset the shape drawer
-		public void setCurrentDrawer(ShapeDrawer l) {
-			if (currentDrawer == l)
-				return;
-
-			// deactivate previous drawer
-			panel.removeMouseListener(currentDrawer);
-			panel.removeMouseMotionListener(currentDrawer);
-			// activate new drawer
-			currentDrawer = l;
-			panel.addMouseListener(currentDrawer);
-			panel.addMouseMotionListener(currentDrawer);
-		}
-
-		// user selected new shape => reset the shape mode
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			final ShapeDrawer currentDrawer = map.get(e.getItem());
-			if (currentDrawer != null) {
-				setCurrentDrawer(currentDrawer);
-			}
-		}
-	}
+//	// this class determines how mouse events are to be interpreted,
+//	// depending on the shape mode currently set
+//	class ShapeManager implements ItemListener {
+//		private final JPanel panel;
+//
+//		private final ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
+//		private final RectangleDrawer rectDrawer = new RectangleDrawer();
+//		private final OvalDrawer ovalDrawer = new OvalDrawer();
+//
+//		private ShapeDrawer currentDrawer;
+//
+//		private final Map<String, ShapeDrawer> map = new HashMap<String, ShapeDrawer>() {
+//			private static final long serialVersionUID = 1L;
+//			{
+//				put("Scribble", scribbleDrawer);
+//				put("Rectangle", rectDrawer);
+//				put("Oval", ovalDrawer);
+//			}
+//		};
+//
+//		public ShapeManager(JPanel itsPanel) {
+//			// drawing panel
+//			panel = itsPanel;
+//			// default: scribble mode
+//			currentDrawer = scribbleDrawer;
+//			// activate scribble drawer
+//			panel.addMouseListener(currentDrawer);
+//			panel.addMouseMotionListener(currentDrawer);
+//
+//		}
+//
+//		abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				/* ignore */ }
+//		}
+//
+//		// if this class is active, the mouse is interpreted as a pen
+//		class ScribbleDrawer extends ShapeDrawer {
+//			int lastx, lasty;
+//
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				lastx = e.getX();
+//				lasty = e.getY();
+//			}
+//
+//			@Override
+//			public void mouseDragged(MouseEvent e) {
+//				final Graphics g = panel.getGraphics();
+//				final int x = e.getX(), y = e.getY();
+//				g.setColor(color);
+//				g.setPaintMode();
+//				g.drawLine(lastx, lasty, x, y);
+//
+//				final Graphics gb = bImg.createGraphics();
+//				gb.setColor(color);
+//				gb.setPaintMode();
+//				gb.drawLine(lastx, lasty, x, y);
+//				lastx = x;
+//				lasty = y;
+//			}
+//		}
+//
+//		// if this class is active, rectangles are drawn
+//		class RectangleDrawer extends ShapeDrawer {
+//			int pressx, pressy;
+//			int lastx = -1, lasty = -1;
+//
+//			// mouse pressed => fix first corner of rectangle
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				pressx = e.getX();
+//				pressy = e.getY();
+//			}
+//
+//			// mouse released => fix second corner of rectangle
+//			// and draw the resulting shape
+//			@Override
+//			public void mouseReleased(MouseEvent e) {
+//				final Graphics g = panel.getGraphics();
+//				final Graphics gb = bImg.createGraphics();
+//				if (lastx != -1) {
+//					// first undraw a rubber rect
+//					g.setXORMode(color);
+//					g.setColor(panel.getBackground());
+//					doDraw(pressx, pressy, lastx, lasty, g);
+//
+//					gb.setXORMode(color);
+//					gb.setColor(panel.getBackground());
+//					doDraw(pressx, pressy, lastx, lasty, gb);
+//					lastx = -1;
+//					lasty = -1;
+//				}
+//				// these commands finish the rubberband mode
+//				g.setPaintMode();
+//				g.setColor(color);
+//				// draw the final rectangle
+//				doDraw(pressx, pressy, e.getX(), e.getY(), g);
+//
+//				gb.setPaintMode();
+//				gb.setColor(color);
+//				// draw the final rectangle
+//				doDraw(pressx, pressy, e.getX(), e.getY(), gb);
+//			}
+//
+//			// mouse released => temporarily set second corner of rectangle
+//			// draw the resulting shape in "rubber-band mode"
+//			@Override
+//			public void mouseDragged(MouseEvent e) {
+//				final Graphics g = panel.getGraphics();
+//				// these commands set the rubberband mode
+//				g.setXORMode(color);
+//				g.setColor(panel.getBackground());
+//				if (lastx != -1) {
+//					// first undraw previous rubber rect
+//					doDraw(pressx, pressy, lastx, lasty, g);
+//				}
+//				lastx = e.getX();
+//				lasty = e.getY();
+//				// draw new rubber rect
+//				doDraw(pressx, pressy, lastx, lasty, g);
+//			}
+//
+//			public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+//				// calculate upperleft and width/height of rectangle
+//				final int x = Math.min(x0, x1);
+//				final int y = Math.min(y0, y1);
+//				final int w = Math.abs(x1 - x0);
+//				final int h = Math.abs(y1 - y0);
+//				// draw rectangle
+//				g.drawRect(x, y, w, h);
+//			}
+//		}
+//
+//		// if this class is active, ovals are drawn
+//		class OvalDrawer extends RectangleDrawer {
+//			@Override
+//			public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+//				final int x = Math.min(x0, x1);
+//				final int y = Math.min(y0, y1);
+//				final int w = Math.abs(x1 - x0);
+//				final int h = Math.abs(y1 - y0);
+//				// draw oval instead of rectangle
+//				g.drawOval(x, y, w, h);
+//			}
+//		}
+//
+//		// reset the shape drawer
+//		public void setCurrentDrawer(ShapeDrawer l) {
+//			if (currentDrawer == l)
+//				return;
+//
+//			// deactivate previous drawer
+//			panel.removeMouseListener(currentDrawer);
+//			panel.removeMouseMotionListener(currentDrawer);
+//			// activate new drawer
+//			currentDrawer = l;
+//			panel.addMouseListener(currentDrawer);
+//			panel.addMouseMotionListener(currentDrawer);
+//		}
+//
+//		// user selected new shape => reset the shape mode
+//		@Override
+//		public void itemStateChanged(ItemEvent e) {
+//			final ShapeDrawer currentDrawer = map.get(e.getItem());
+//			if (currentDrawer != null) {
+//				setCurrentDrawer(currentDrawer);
+//			}
+//		}
+//	}
 
 	class ColorItemListener implements ItemListener {
 		// user selected new color => store new color in DrawGUIs
