@@ -8,22 +8,23 @@ public class CommandQueue {
 
 	private static final List<Drawable> QUEUE = new LinkedList<>();
 
-	private static int CURRENT_IDX = 0;
+	private static int CURRENT_INDEX = 0;
 
 	public static void add(Drawable command) {
 		QUEUE.add(command);
+		CURRENT_INDEX++;
 	}
 
 	public static void workOffRequests(Graphics g) {
 		for (final Drawable cmd : QUEUE) {
 			cmd.draw(g);
 		}
-		CURRENT_IDX = QUEUE.size();
+		CURRENT_INDEX = QUEUE.size();
 	}
 
 	public static void undo(Graphics g) {
-		CURRENT_IDX--;
-		for (int i = 0; i < CURRENT_IDX; i++) {
+		CURRENT_INDEX--;
+		for (int i = 0; i < CURRENT_INDEX; i++) {
 			QUEUE.get(i).draw(g);
 		}
 	}
