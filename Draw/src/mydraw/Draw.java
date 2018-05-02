@@ -93,11 +93,9 @@ public class Draw
 
 		Graphics g = window.panel.getGraphics();
 		g.setColor(window.getBackground());
-		g.fillRect(0, 0, getWidth(), getHeight());
 
 		Graphics gb = window.bImg.createGraphics();
 		gb.setColor(window.getBackground());
-		gb.fillRect(0, 0, getWidth(), getHeight());
 	}
 
 	/**
@@ -196,12 +194,12 @@ public class Draw
 	public void clear()
 	{
 		Graphics g = window.panel.getGraphics();
-		g.setColor(window.panel.getBackground());
+		g.setColor(window.getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		Graphics gb = window.bImg.getGraphics();
-		gb.setColor(window.panel.getBackground());
-		gb.fillRect(0, 0, getWidth(), getHeight());
+		gb.setColor(window.getBackground());
+		gb.fillRect(0, 0, window.bImg.getWidth(), window.bImg.getHeight());
 	}
 
 	public void autoDraw()
@@ -210,6 +208,7 @@ public class Draw
 		try
 		{
 			setBGColor("blue");
+			clear();
 			drawOval(new Point(50, 50), new Point(200, 200));
 			setFGColor("red");
 			drawRectangle(new Point(100, 100), new Point(300, 300));
@@ -236,7 +235,7 @@ public class Draw
 	public void writeImage(Image img, String filename) throws IOException
 	{
 		ImageIO.write((RenderedImage) img, "PNG",
-				new File(filename.toString()));
+				new File(filename));
 	}
 
 	/**

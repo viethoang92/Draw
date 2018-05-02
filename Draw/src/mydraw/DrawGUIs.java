@@ -175,7 +175,7 @@ public class DrawGUIs extends JFrame
         {
             try
             {
-                app.writeImage(bImg, "mybImg");
+                app.writeImage(bImg, "mybImg.png");
             }
             catch (IOException e)
             {

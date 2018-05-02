@@ -103,9 +103,9 @@ public class DrawTest
     {
         window.autoDraw();
         Image image1 = window.getDrawing();
-        window.writeImage(image1, "test");
-        Image img = window.readImage("test");
-        Image image2 = window.readImage("refbImg");
+        window.writeImage(image1, "test.png");
+        Image img = window.readImage("test.png");
+        Image image2 = window.readImage("refbImg.png");
         assertTrue(compareImages((BufferedImage) image1, (BufferedImage) img));
         assertTrue(compareImages((BufferedImage) image2, (BufferedImage) img));
         assertTrue(compareImages((BufferedImage) image1, (BufferedImage) image2));
