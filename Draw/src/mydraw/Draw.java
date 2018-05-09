@@ -12,18 +12,14 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public class Draw
-{
-	protected DrawGUIs window;
+public class Draw {
+	private final DrawGUIs window;
 
-
-	public Draw()
-	{
+	public Draw() {
 		window = new DrawGUIs(this);
 	}
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new Draw();
 	}
 
@@ -32,9 +28,8 @@ public class Draw
 	 *
 	 * @return current drawing color
 	 */
-	public String getFGColor()
-	{
-		return getKey(window.color);
+	public String getFGColor() {
+		return getKey(window.getColor());
 	}
 
 	/**
@@ -45,36 +40,30 @@ public class Draw
 	 * @throws ColorException
 	 *             if color is not in Choice
 	 */
-	public void setFGColor(String new_color) throws ColorException
-	{
-		Color color = window.cm.get(new_color.toLowerCase());
+	public void setFGColor(String new_color) throws ColorException {
+		final Color color = window.getColorMap().get(new_color.toLowerCase());
 		if (color != null)
-			window.color = color;
+			window.setColor(color);
 		else
 			throw new ColorException();
 	}
 
-
-
-	public int getWidth()
-	{
+	public int getWidth() {
 		return window.getSize().width;
 	}
 
-	public int getHeight()
-	{
+	public int getHeight() {
 		return window.getSize().height;
 	}
 
-	public void setHeight(int height)
-	{
+	public void setHeight(int height) {
 		window.setSize(window.getSize().width, height);
 	}
 
-	public void setWidth(int width)
-	{
+	public void setWidth(int width) {
 		window.setSize(width, window.getSize().height);
 	}
+
 	/**
 	 * Sets background color
 	 *
@@ -83,18 +72,17 @@ public class Draw
 	 * @throws ColorException
 	 *             invalid color
 	 */
-	public void setBGColor(String new_color) throws ColorException
-	{
-		Color color = window.cm.get(new_color.toLowerCase());
+	public void setBGColor(String new_color) throws ColorException {
+		final Color color = window.getColorMap().get(new_color.toLowerCase());
 		if (color != null)
 			window.setBackground(color);
 		else
 			throw new ColorException();
 
-		Graphics g = window.panel.getGraphics();
+		final Graphics g = window.getDrawingPanel().getGraphics();
 		g.setColor(window.getBackground());
 
-		Graphics gb = window.bImg.createGraphics();
+		final Graphics gb = window.getBufferedImage().createGraphics();
 		gb.setColor(window.getBackground());
 	}
 
@@ -108,10 +96,6 @@ public class Draw
 		return getKey(window.getBackground());
 	}
 
-
-
-
-
 	/**
 	 * Draws a rectangle.
 	 *
@@ -120,17 +104,16 @@ public class Draw
 	 * @param lower_right
 	 *            bottom right corner
 	 */
-	public void drawRectangle(Point upper_left, Point lower_right)
-	{
-		int width = lower_right.x - upper_left.x;
-		int height = lower_right.y - upper_left.y;
+	public void drawRectangle(Point upper_left, Point lower_right) {
+		final int width = lower_right.x - upper_left.x;
+		final int height = lower_right.y - upper_left.y;
 
-		Graphics g = window.panel.getGraphics();
-		g.setColor(window.color);
+		final Graphics g = window.getDrawingPanel().getGraphics();
+		g.setColor(window.getColor());
 		g.drawRect(upper_left.x, upper_left.y, width, height);
 
-		Graphics gb = window.bImg.createGraphics();
-		gb.setColor(window.color);
+		final Graphics gb = window.getBufferedImage().createGraphics();
+		gb.setColor(window.getColor());
 		gb.drawRect(upper_left.x, upper_left.y, width, height);
 	}
 
@@ -142,17 +125,16 @@ public class Draw
 	 * @param lower_right
 	 *            bottom right corner
 	 */
-	public void drawOval(Point upper_left, Point lower_right)
-	{
-		int width = lower_right.x - upper_left.x;
-		int height = lower_right.y - upper_left.y;
+	public void drawOval(Point upper_left, Point lower_right) {
+		final int width = lower_right.x - upper_left.x;
+		final int height = lower_right.y - upper_left.y;
 
-		Graphics g = window.panel.getGraphics();
-		g.setColor(window.color);
+		final Graphics g = window.getDrawingPanel().getGraphics();
+		g.setColor(window.getColor());
 		g.drawOval(upper_left.x, upper_left.y, width, height);
 
-		Graphics gb = window.bImg.createGraphics();
-		gb.setColor(window.color);
+		final Graphics gb = window.getBufferedImage().createGraphics();
+		gb.setColor(window.getColor());
 		gb.drawOval(upper_left.x, upper_left.y, width, height);
 	}
 
@@ -163,19 +145,19 @@ public class Draw
 	 *            list of points
 	 */
 	public void drawPolyLine(java.util.List<Point> points) {
-		int[] x = new int[points.size()];
-		int[] y = new int[points.size()];
+		final int[] x = new int[points.size()];
+		final int[] y = new int[points.size()];
 		for (int i = 0; i < points.size(); i++) {
-			Point p = points.get(i);
+			final Point p = points.get(i);
 			x[i] = p.x;
 			y[i] = p.y;
 		}
-		Graphics g = window.panel.getGraphics();
-		g.setColor(window.color);
+		final Graphics g = window.getDrawingPanel().getGraphics();
+		g.setColor(window.getColor());
 		g.drawPolyline(x, y, points.size());
 
-		Graphics gb = window.bImg.getGraphics();
-		gb.setColor(window.color);
+		final Graphics gb = window.getBufferedImage().getGraphics();
+		gb.setColor(window.getColor());
 		gb.drawPolyline(x, y, points.size());
 	}
 
@@ -185,39 +167,34 @@ public class Draw
 	 * @return drawing
 	 */
 	public Image getDrawing() {
-		return window.bImg;
+		return window.getBufferedImage();
 	}
 
 	/**
 	 * Clears drawing panel.
 	 */
-	public void clear()
-	{
-		Graphics g = window.panel.getGraphics();
+	public void clear() {
+		final Graphics g = window.getDrawingPanel().getGraphics();
 		g.setColor(window.getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		Graphics gb = window.bImg.getGraphics();
+		final Graphics gb = window.getBufferedImage().getGraphics();
 		gb.setColor(window.getBackground());
-		gb.fillRect(0, 0, window.bImg.getWidth(), window.bImg.getHeight());
+		gb.fillRect(0, 0, window.getBufferedImage().getWidth(), window.getBufferedImage().getHeight());
 	}
 
-	public void autoDraw()
-	{
+	public void autoDraw() {
 
-		try
-		{
+		try {
 			setBGColor("blue");
 			clear();
 			drawOval(new Point(50, 50), new Point(200, 200));
 			setFGColor("red");
 			drawRectangle(new Point(100, 100), new Point(300, 300));
 			setFGColor("Green");
-			List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
+			final List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
 			drawPolyLine(list);
-		}
-		catch (ColorException e)
-		{
+		} catch (final ColorException e) {
 			e.printStackTrace();
 		}
 
@@ -232,10 +209,8 @@ public class Draw
 	 *            filename
 	 * @throws IOException
 	 */
-	public void writeImage(Image img, String filename) throws IOException
-	{
-		ImageIO.write((RenderedImage) img, "PNG",
-				new File(filename));
+	public void writeImage(Image img, String filename) throws IOException {
+		ImageIO.write((RenderedImage) img, "PNG", new File(filename));
 	}
 
 	/**
@@ -250,11 +225,10 @@ public class Draw
 		return ImageIO.read(new File(filename));
 	}
 
-	private String getKey(Color color)
-	{
-		for (String key : window.cm.keySet())
-		{
-			if (window.cm.get(key).equals(color)) return key;
+	private String getKey(Color color) {
+		for (final String key : window.getColorMap().keySet()) {
+			if (window.getColorMap().get(key).equals(color))
+				return key;
 		}
 		return null;
 	}
