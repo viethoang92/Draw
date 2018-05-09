@@ -11,21 +11,33 @@ public class CommandQueue {
 	private static int CURRENT_INDEX = 0;
 
 	public static void add(Drawable command) {
-		QUEUE.add(command);
 		CURRENT_INDEX++;
-	}
-
-	public static void workOffRequests(Graphics g) {
-		for (final Drawable cmd : QUEUE) {
-			cmd.draw(g);
+		for (int i = CURRENT_INDEX; i < QUEUE.size(); i++) {
+			QUEUE.remove(i);
 		}
-		CURRENT_INDEX = QUEUE.size();
+		QUEUE.add(command);
 	}
 
-	public static void undo(Graphics g) {
-		CURRENT_INDEX--;
+	public static void redraw(Graphics g) {
 		for (int i = 0; i < CURRENT_INDEX; i++) {
 			QUEUE.get(i).draw(g);
+		}
+	}
+
+	public static void undo(Graphics dPanel, Graphics bImg) {
+		System.out.println(CURRENT_INDEX);
+		if (CURRENT_INDEX > 0) {
+			CURRENT_INDEX--;
+			redraw(dPanel);
+			redraw(bImg);
+		}
+	}
+
+	public static void redo(Graphics dPanel, Graphics bImg) {
+		if (!(CURRENT_INDEX == QUEUE.size() - 1)) {
+			CURRENT_INDEX++;
+			redraw(dPanel);
+			redraw(bImg);
 		}
 	}
 }

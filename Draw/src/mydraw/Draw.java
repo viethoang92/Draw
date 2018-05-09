@@ -75,15 +75,15 @@ public class Draw {
 	public void setBGColor(String new_color) throws ColorException {
 		final Color color = window.getColorMap().get(new_color.toLowerCase());
 		if (color != null)
-			window.setBackground(color);
+			window.getDrawingPanel().setBackground(color);
 		else
 			throw new ColorException();
 
 		final Graphics g = window.getDrawingPanel().getGraphics();
-		g.setColor(window.getBackground());
+		g.setColor(window.getDrawingPanel().getBackground());
 
 		final Graphics gb = window.getBufferedImage().createGraphics();
-		gb.setColor(window.getBackground());
+		gb.setColor(window.getDrawingPanel().getBackground());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Draw {
 	 */
 	public String getBGColor() {
 
-		return getKey(window.getBackground());
+		return getKey(window.getDrawingPanel().getBackground());
 	}
 
 	/**
@@ -105,16 +105,10 @@ public class Draw {
 	 *            bottom right corner
 	 */
 	public void drawRectangle(Point upper_left, Point lower_right) {
-		final int width = lower_right.x - upper_left.x;
-		final int height = lower_right.y - upper_left.y;
-
-		final Graphics g = window.getDrawingPanel().getGraphics();
-		g.setColor(window.getColor());
-		g.drawRect(upper_left.x, upper_left.y, width, height);
-
-		final Graphics gb = window.getBufferedImage().createGraphics();
-		gb.setColor(window.getColor());
-		gb.drawRect(upper_left.x, upper_left.y, width, height);
+		final RectangleCommand cmd = new RectangleCommand(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		cmd.draw(window.getBufferedImage().getGraphics());
+		CommandQueue.add(cmd);
 	}
 
 	/**
@@ -126,16 +120,10 @@ public class Draw {
 	 *            bottom right corner
 	 */
 	public void drawOval(Point upper_left, Point lower_right) {
-		final int width = lower_right.x - upper_left.x;
-		final int height = lower_right.y - upper_left.y;
-
-		final Graphics g = window.getDrawingPanel().getGraphics();
-		g.setColor(window.getColor());
-		g.drawOval(upper_left.x, upper_left.y, width, height);
-
-		final Graphics gb = window.getBufferedImage().createGraphics();
-		gb.setColor(window.getColor());
-		gb.drawOval(upper_left.x, upper_left.y, width, height);
+		final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		cmd.draw(window.getBufferedImage().getGraphics());
+		CommandQueue.add(cmd);
 	}
 
 	/**
@@ -145,20 +133,10 @@ public class Draw {
 	 *            list of points
 	 */
 	public void drawPolyLine(java.util.List<Point> points) {
-		final int[] x = new int[points.size()];
-		final int[] y = new int[points.size()];
-		for (int i = 0; i < points.size(); i++) {
-			final Point p = points.get(i);
-			x[i] = p.x;
-			y[i] = p.y;
-		}
-		final Graphics g = window.getDrawingPanel().getGraphics();
-		g.setColor(window.getColor());
-		g.drawPolyline(x, y, points.size());
-
-		final Graphics gb = window.getBufferedImage().getGraphics();
-		gb.setColor(window.getColor());
-		gb.drawPolyline(x, y, points.size());
+		final ScribbleCommand cmd = new ScribbleCommand(points, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		cmd.draw(window.getBufferedImage().getGraphics());
+		CommandQueue.add(cmd);
 	}
 
 	/**
@@ -174,13 +152,11 @@ public class Draw {
 	 * Clears drawing panel.
 	 */
 	public void clear() {
-		final Graphics g = window.getDrawingPanel().getGraphics();
-		g.setColor(window.getBackground());
-		g.fillRect(0, 0, getWidth(), getHeight());
-
-		final Graphics gb = window.getBufferedImage().getGraphics();
-		gb.setColor(window.getBackground());
-		gb.fillRect(0, 0, window.getBufferedImage().getWidth(), window.getBufferedImage().getHeight());
+		final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(getWidth(), getHeight()),
+				window.getDrawingPanel().getBackground());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		cmd.draw(window.getBufferedImage().getGraphics());
+		CommandQueue.add(cmd);
 	}
 
 	public void autoDraw() {
@@ -223,6 +199,14 @@ public class Draw {
 	 */
 	public Image readImage(String filename) throws IOException {
 		return ImageIO.read(new File(filename));
+	}
+
+	public void undo() {
+		CommandQueue.undo(window.getDrawingPanel().getGraphics(), window.getBufferedImage().getGraphics());
+	}
+
+	public void redo() {
+		CommandQueue.redo(window.getDrawingPanel().getGraphics(), window.getBufferedImage().createGraphics());
 	}
 
 	private String getKey(Color color) {

@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
@@ -20,7 +22,6 @@ import java.util.Map.Entry;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 /** This class implements the GUI for our application */
@@ -60,13 +61,22 @@ public class DrawGUIs extends JFrame {
 		panel = new JPanel();
 		panel.setBackground(Color.WHITE);
 		panel.setPreferredSize(new Dimension(frameWidth, panelHeight));
+		panel.addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				System.out.println("redraw");
+				CommandQueue.redraw(panel.getGraphics());
+			}
+		});
 
 		// selector for drawing modes
+		final ShapeManager shapeManager = new ShapeManager(panel, this);
 		final Choice shape_chooser = new Choice();
-		shape_chooser.add("Scribble");
-		shape_chooser.add("Rectangle");
-		shape_chooser.add("Oval");
-		shape_chooser.addItemListener(new ShapeManager(panel, this));
+		for (final String str : shapeManager.getDrawerSet()) {
+			shape_chooser.add(str);
+		}
+		shape_chooser.addItemListener(shapeManager);
 
 		// selector for drawing colors
 		final Choice color_chooser = new Choice();
@@ -81,12 +91,14 @@ public class DrawGUIs extends JFrame {
 		final JButton quit = new JButton("Quit");
 		final JButton auto = new JButton("Auto");
 		final JButton save = new JButton("Save");
+		final JButton undo = new JButton("Undo");
+		final JButton redo = new JButton("Redo");
 
 		// Create the menu bar. Make it have a gray background.
-		final JMenuBar mb = new JMenuBar();
+		final JPanel mb = new JPanel();
 		mb.setOpaque(true);
 		mb.setBackground(Color.GRAY);
-		mb.setPreferredSize(new Dimension(frameWidth, menuBarHeight));
+		// mb.setPreferredSize(new Dimension(frameWidth, menuBarHeight));
 
 		// Set a LayoutManager, and add the choosers and buttons to the menubar.
 		// this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
@@ -98,6 +110,8 @@ public class DrawGUIs extends JFrame {
 		mb.add(quit, BorderLayout.NORTH);
 		mb.add(auto, BorderLayout.NORTH);
 		mb.add(save, BorderLayout.NORTH);
+		mb.add(undo, BorderLayout.NORTH);
+		mb.add(redo, BorderLayout.NORTH);
 
 		// Setup BufferedImage
 		bImg = new BufferedImage(frameWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
@@ -107,13 +121,13 @@ public class DrawGUIs extends JFrame {
 
 		// Set a LayoutManager
 		this.setLayout(new BorderLayout(3, 3));
-		this.setSize(frameWidth, frameHeight);
+		// this.setSize(frameWidth, frameHeight);
 		this.setBackground(Color.WHITE);
 		this.setForeground(Color.BLACK);
 
 		// Set the menu bar and add the panel to the Content
-		this.setJMenuBar(mb);
-		this.getContentPane().add(panel, BorderLayout.CENTER);
+		this.add(mb, BorderLayout.NORTH);
+		this.add(panel, BorderLayout.CENTER);
 
 		// Display the window.
 		this.pack();
@@ -132,6 +146,8 @@ public class DrawGUIs extends JFrame {
 		quit.addActionListener(new DrawActionListener("quit"));
 		auto.addActionListener(new DrawActionListener("auto"));
 		save.addActionListener(new DrawActionListener("save"));
+		undo.addActionListener(new DrawActionListener("undo"));
+		redo.addActionListener(new DrawActionListener("redo"));
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -141,16 +157,15 @@ public class DrawGUIs extends JFrame {
 
 	/** This is the application method that processes commands sent by the GUI */
 	public void doCommand(String command) {
-		if (command.equals("clear")) { // clear the GUI window
-										// It would be more modular to include this functionality in the GUI
-										// class itself. But for demonstration purposes, we do it here.
+		if (command.equals("clear")) {
+			// clear the GUI window
+			// It would be more modular to include this functionality in the GUI
+			// class itself. But for demonstration purposes, we do it here.
 			app.clear();
 		} else if (command.equals("quit")) { // quit the application
 			this.dispose(); // close the GUI
 			System.exit(0); // and exit.
-		}
-
-		else if (command.equals("auto")) {
+		} else if (command.equals("auto")) {
 			app.autoDraw();
 		} else if (command.equals("save")) {
 			try {
@@ -158,6 +173,10 @@ public class DrawGUIs extends JFrame {
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
+		} else if (command.equals("undo")) {
+			CommandQueue.undo(panel.getGraphics(), bImg.getGraphics());
+		} else if (command.equals("redo")) {
+			CommandQueue.redo(panel.getGraphics(), bImg.getGraphics());
 		}
 	}
 

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -23,6 +24,7 @@ class ShapeManager implements ItemListener {
 	private final ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
 	private final RectangleDrawer rectDrawer = new RectangleDrawer();
 	private final OvalDrawer ovalDrawer = new OvalDrawer();
+	private final FilledRectDrawer filledRectDrawer = new FilledRectDrawer();
 	private ShapeDrawer currentDrawer;
 
 	private final Map<String, ShapeDrawer> map = new HashMap<String, ShapeDrawer>() {
@@ -31,6 +33,7 @@ class ShapeManager implements ItemListener {
 			put("Scribble", scribbleDrawer);
 			put("Rectangle", rectDrawer);
 			put("Oval", ovalDrawer);
+			put("Filled Rectangle", filledRectDrawer);
 		}
 	};
 
@@ -42,6 +45,15 @@ class ShapeManager implements ItemListener {
 		// activate scribble drawer
 		panel.addMouseListener(currentDrawer);
 		panel.addMouseMotionListener(currentDrawer);
+	}
+
+	/**
+	 * Return the key set of the ShapeDrawers.
+	 *
+	 * @return key set
+	 */
+	public Set<String> getDrawerSet() {
+		return map.keySet();
 	}
 
 	abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
@@ -66,23 +78,25 @@ class ShapeManager implements ItemListener {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			final Graphics g = panel.getGraphics();
+			System.out.println(points);
 			final ScribbleCommand cmd = new ScribbleCommand(points, g.getColor());
+			// cmd.draw(g);
 			CommandQueue.add(cmd);
 			points.clear();
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			final Graphics g = panel.getGraphics();
+			// final Graphics g = panel.getGraphics();
 			final int x = e.getX(), y = e.getY();
-			g.setColor(window.getColor());
-			g.setPaintMode();
-			g.drawLine(lastx, lasty, x, y);
-
-			final Graphics gb = window.getBufferedImage().createGraphics();
-			gb.setColor(window.getColor());
-			gb.setPaintMode();
-			gb.drawLine(lastx, lasty, x, y);
+			// g.setColor(window.getColor());
+			// g.setPaintMode();
+			// g.drawLine(lastx, lasty, x, y);
+			//
+			// final Graphics gb = window.getBufferedImage().createGraphics();
+			// gb.setColor(window.getColor());
+			// gb.setPaintMode();
+			// gb.drawLine(lastx, lasty, x, y);
 			lastx = x;
 			lasty = y;
 
@@ -122,17 +136,12 @@ class ShapeManager implements ItemListener {
 			}
 			// these commands finish the rubberband mode
 			g.setPaintMode();
-			g.setColor(window.getColor());
-			// draw the final rectangle
-			doDraw(pressx, pressy, e.getX(), e.getY(), g);
-
 			gb.setPaintMode();
-			gb.setColor(window.getColor());
-			// draw the final rectangle
-			doDraw(pressx, pressy, e.getX(), e.getY(), gb);
 
 			final Drawable cmd = new RectangleCommand(new Point(pressx, pressy), new Point(e.getX(), e.getY()),
-					g.getColor());
+					window.getColor());
+			cmd.draw(g);
+			cmd.draw(gb);
 			CommandQueue.add(cmd);
 		}
 
@@ -165,6 +174,39 @@ class ShapeManager implements ItemListener {
 		}
 	}
 
+	class FilledRectDrawer extends RectangleDrawer {
+
+		// mouse released => fix second corner of rectangle
+		// and draw the resulting shape
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			final Graphics g = panel.getGraphics();
+			final Graphics gb = window.getBufferedImage().createGraphics();
+			if (lastx != -1) {
+				// first undraw a rubber rect
+				g.setXORMode(window.getColor());
+				g.setColor(panel.getBackground());
+				doDraw(pressx, pressy, lastx, lasty, g);
+
+				gb.setXORMode(window.getColor());
+				gb.setColor(panel.getBackground());
+				doDraw(pressx, pressy, lastx, lasty, gb);
+				lastx = -1;
+				lasty = -1;
+			}
+			// these commands finish the rubberband mode
+			g.setPaintMode();
+			gb.setPaintMode();
+
+			final Drawable cmd = new FillRectCommand(new Point(pressx, pressy), new Point(e.getX(), e.getY()),
+					window.getColor());
+			cmd.draw(g);
+			cmd.draw(gb);
+			CommandQueue.add(cmd);
+		}
+
+	}
+
 	// if this class is active, ovals are drawn
 	class OvalDrawer extends RectangleDrawer {
 		@Override
@@ -195,12 +237,9 @@ class ShapeManager implements ItemListener {
 	// user selected new shape => reset the shape mode
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getItem().equals("Scribble")) {
-			setCurrentDrawer(scribbleDrawer);
-		} else if (e.getItem().equals("Rectangle")) {
-			setCurrentDrawer(rectDrawer);
-		} else if (e.getItem().equals("Oval")) {
-			setCurrentDrawer(ovalDrawer);
+		final ShapeDrawer newDrawer = map.get(e.getItem());
+		if (newDrawer != null) {
+			setCurrentDrawer(newDrawer);
 		}
 	}
 }

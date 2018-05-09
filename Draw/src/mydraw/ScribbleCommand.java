@@ -3,6 +3,7 @@ package mydraw;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScribbleCommand implements Drawable {
@@ -12,12 +13,14 @@ public class ScribbleCommand implements Drawable {
 	private final Color color;
 
 	public ScribbleCommand(List<Point> points, Color color) {
-		this.points = points;
+		this.points = new ArrayList<>();
+		this.points.addAll(points);
 		this.color = color;
 	}
 
 	@Override
 	public void draw(Graphics g) {
+		System.out.println("scribble");
 		final int[] x = new int[points.size()];
 		final int[] y = new int[points.size()];
 		for (int i = 0; i < points.size(); i++) {
