@@ -89,6 +89,15 @@ public class DrawGUIs extends JFrame
             color_chooser.add(enp.getKey());
         }
         color_chooser.addItemListener(new ColorItemListener());
+        
+        // selector for backgroundcolors
+        final Choice bgColor_chooser = new Choice();
+        for (final Entry<String, Color> enp : cm.entrySet())
+        {
+            bgColor_chooser.add(enp.getKey());
+        }
+        bgColor_chooser.addItemListener(new BgColorItemListener());
+        
 
         // Create buttons
         final JButton clear = new JButton("Clear");
@@ -109,6 +118,8 @@ public class DrawGUIs extends JFrame
         bb.add(shape_chooser);
         bb.add(new JLabel("Color:"));
         bb.add(color_chooser);
+        bb.add(new JLabel("Background:"));
+        bb.add(bgColor_chooser);
         bb.add(clear, BorderLayout.NORTH);
         bb.add(quit, BorderLayout.NORTH);
         bb.add(auto, BorderLayout.NORTH);
@@ -249,6 +260,19 @@ public class DrawGUIs extends JFrame
             if (newColor != null)
             {
                 color = cm.get(e.getItem());
+            }
+        }
+    }
+    class BgColorItemListener implements ItemListener
+    {
+        // user selected new color => store new color in DrawGUIs
+        @Override
+        public void itemStateChanged(ItemEvent e)
+        {
+            final Color newColor = cm.get(e.getItem());
+            if (newColor != null)
+            {
+                panel.setBackground(newColor);
             }
         }
     }
