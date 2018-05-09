@@ -14,7 +14,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,7 +23,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import mydraw.ShapeManager.FillRectDrawer;
@@ -50,9 +51,10 @@ public class DrawGUIs extends JFrame
     };
     
     private final Draw app;
-    private final int frameWidth = 600;
+    private final int frameWidth = 800;
     private final int frameHeight = 500;
     private final int menuBarHeight = 40;
+    private final int buttonBarHeight = 40;
     private final int panelHeight;
 
     private static final long serialVersionUID = 1L;
@@ -62,7 +64,7 @@ public class DrawGUIs extends JFrame
         super("Draw");
         app = application;
         color = Color.BLACK;
-        panelHeight = frameHeight - menuBarHeight;
+        panelHeight = frameHeight - menuBarHeight - buttonBarHeight;
         displayGUI();
     }
 
@@ -104,16 +106,27 @@ public class DrawGUIs extends JFrame
         final JButton clear = new JButton("Clear");
         final JButton quit = new JButton("Quit");
         final JButton auto = new JButton("Auto");
-        final JButton save = new JButton("Save");
 
-        // Create the menu bar. Make it have a gray background.
+        // Create menu bar
+        final JMenuBar mb = new JMenuBar();
+        mb.setOpaque(true);
+        mb.setBackground(Color.lightGray);
+        mb.setPreferredSize(new Dimension(frameWidth, menuBarHeight));
+        JButton txtSave = new JButton("Text speichern ...");
+        JButton txtRead = new JButton("Datei lesen...");
+        JButton save = new JButton("Save");
+        mb.add(save, BorderLayout.NORTH);
+        mb.add(txtSave, BorderLayout.NORTH);
+        mb.add(txtRead, BorderLayout.NORTH);
+        
+        // Create the button bar. Make it have a gray background.
         final JPanel bb = new JPanel();
         bb.setOpaque(true);
         bb.setBackground(Color.GRAY);
-        bb.setPreferredSize(new Dimension(frameWidth, menuBarHeight));
+        bb.setPreferredSize(new Dimension(frameWidth, buttonBarHeight));
         
 
-        // Set a LayoutManager, and add the choosers and buttons to the menubar.
+        // Set a LayoutManager, and add the choosers and buttons to the button bar.
         // this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         bb.add(new JLabel("Shape:"));
         bb.add(shape_chooser);
@@ -124,7 +137,7 @@ public class DrawGUIs extends JFrame
         bb.add(clear, BorderLayout.NORTH);
         bb.add(quit, BorderLayout.NORTH);
         bb.add(auto, BorderLayout.NORTH);
-        bb.add(save, BorderLayout.NORTH);
+
 
         // Setup BufferedImage
         bImg = new BufferedImage(frameWidth, panelHeight,
@@ -140,7 +153,8 @@ public class DrawGUIs extends JFrame
         this.setForeground(Color.BLACK);
 
         // Set the menu bar and add the panel to the Content
-        this.getContentPane().add(bb, BorderLayout.NORTH);
+        this.getContentPane().add(mb, BorderLayout.NORTH);
+        this.getContentPane().add(bb, BorderLayout.SOUTH);
         this.getContentPane()
             .add(panel, BorderLayout.CENTER);
 
@@ -163,6 +177,9 @@ public class DrawGUIs extends JFrame
         quit.addActionListener(new DrawActionListener("quit"));
         auto.addActionListener(new DrawActionListener("auto"));
         save.addActionListener(new DrawActionListener("save"));
+        txtSave.addActionListener(new DrawActionListener("txtSave"));
+        txtRead.addActionListener(new DrawActionListener("txtRead"));
+        
     }
 
     public void paintComponent(Graphics g)
@@ -206,6 +223,22 @@ public class DrawGUIs extends JFrame
             {
                 e.printStackTrace();
             }
+        }
+        else if (command.equals("txtSave"))
+        {
+            try
+            {
+                app.writeText("commands");
+            }
+            catch (TxtIOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else if(command.equals("txtRead"))
+        {
+            
         }
     }
 

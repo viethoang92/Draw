@@ -28,4 +28,9 @@ public class CommandQueue {
 			QUEUE.get(i).draw(g);
 		}
 	}
+	
+	public static List<Drawable> getQueue()
+	{
+	    return QUEUE;
+	}
 }
