@@ -15,7 +15,7 @@ public class CommandQueue {
 		CURRENT_INDEX++;
 	}
 
-	public static void workOffRequests(Graphics g) {
+	public static void redraw(Graphics g) {
 		for (final Drawable cmd : QUEUE) {
 			cmd.draw(g);
 		}
