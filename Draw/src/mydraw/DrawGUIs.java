@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,7 +36,7 @@ public class DrawGUIs extends JFrame
     private BufferedImage bImg;
     private Color color;
     private JPanel panel;
-    private final Map<String, Color> cm = new HashMap<String, Color>()
+    private final Map<String, Color> cm = new LinkedHashMap<String, Color>()
     {
         private static final long serialVersionUID = 1L;
         {

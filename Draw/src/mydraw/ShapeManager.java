@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +33,7 @@ class ShapeManager implements ItemListener
     private final FillOvalDrawer fillOvalDrawer = new FillOvalDrawer();
     private ShapeDrawer currentDrawer;
 
-    private final Map<String, ShapeDrawer> sm = new HashMap<String, ShapeDrawer>()
+    private final Map<String,ShapeDrawer> sm = new LinkedHashMap<String, ShapeDrawer>()
     {
         /**
          * 
