@@ -3,6 +3,7 @@ package mydraw;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,8 @@ public class ScribbleCommand implements Drawable {
 	 *            color
 	 */
 	public ScribbleCommand(List<Point> points, Color color) {
-		this.points = points;
+		this.points = new ArrayList<>();
+		this.points.addAll(points);
 		this.color = color;
 	}
 

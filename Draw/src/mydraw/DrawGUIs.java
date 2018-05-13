@@ -111,6 +111,8 @@ public class DrawGUIs extends JFrame {
         // Create buttons
         final JButton clear = new JButton("Clear");
         final JButton auto = new JButton("Auto");
+        final JButton undo = new JButton("Undo");
+        final JButton redo = new JButton("Redo");
 
 
         JMenuItem quit = new JMenuItem("Quit");
@@ -123,7 +125,6 @@ public class DrawGUIs extends JFrame {
         menu.add(quit);
 
 
-
         // Set a LayoutManager, and add the choosers and buttons to the button bar.
         // this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         tb.add(new JLabel("Shape:"));
@@ -134,6 +135,8 @@ public class DrawGUIs extends JFrame {
         tb.add(bgColor_chooser);
         tb.add(clear, BorderLayout.SOUTH);
         tb.add(auto, BorderLayout.NORTH);
+        tb.add(undo, BorderLayout.NORTH);
+        tb.add(redo, BorderLayout.NORTH);
 
 
         // Setup BufferedImage
@@ -174,7 +177,8 @@ public class DrawGUIs extends JFrame {
         save.addActionListener(new DrawActionListener("save"));
         txtSave.addActionListener(new DrawActionListener("txtSave"));
         txtRead.addActionListener(new DrawActionListener("txtRead"));
-
+        undo.addActionListener(new DrawActionListener("undo"));
+        redo.addActionListener(new DrawActionListener("redo"));
     }
 
     public void paintComponent(Graphics g) {
@@ -215,7 +219,12 @@ public class DrawGUIs extends JFrame {
                 e.printStackTrace();
             }
         } else if (command.equals("txtRead")) {
-
+        } else if (command.equals("undo")) {
+            CommandQueue.undo(panel.getGraphics());
+            panel.updateUI();
+        } else if (command.equals("redo")) {
+            CommandQueue.redo(panel.getGraphics());
+            panel.updateUI();
         }
     }
 
