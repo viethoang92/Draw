@@ -244,26 +244,49 @@ public class DrawGUIs extends JFrame
         }
     }
 
-    public Color getColor()
-    {
-        return color;
-    }
+	/**
+	 * Returns the current drawing color.
+	 *
+	 * @return drawing color
+	 */
+	public Color getColor() {
+		return color;
+	}
 
-    public void setColor(Color newColor)
-    {
-        color = newColor;
-    }
+	/**
+	 * Sets the new drawing color.
+	 *
+	 * @param newColor
+	 *            new drawing color
+	 */
+	public void setColor(Color newColor) {
+		color = newColor;
+	}
 
-    public Map<String, Color> getColorMap()
-    {
-        return cm;
-    }
+	/**
+	 * Returns the color map with all available colors.
+	 *
+	 * @return color map
+	 */
+	public Map<String, Color> getColorMap() {
+		return cm;
+	}
 
+    /**
+     * Returns the drawing panel.
+     *
+     * @return panel
+     */
     public JPanel getDrawingPanel()
     {
         return panel;
     }
 
+    /**
+     * returns the buffered image.
+     *
+     * @return buffered image
+     */
     public BufferedImage getBufferedImage()
     {
         return bImg;
