@@ -23,12 +23,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import mydraw.ShapeManager.FillRectDrawer;
 import mydraw.ShapeManager.ShapeDrawer;
 
 /** This class implements the GUI for our application */
@@ -49,7 +46,7 @@ public class DrawGUIs extends JFrame
             put("yellow", Color.YELLOW);
         }
     };
-    
+
     private final Draw app;
     private final int frameWidth = 800;
     private final int frameHeight = 500;
@@ -59,14 +56,19 @@ public class DrawGUIs extends JFrame
 
     private static final long serialVersionUID = 1L;
 
-    public DrawGUIs(Draw application)
-    {
-        super("Draw");
-        app = application;
-        color = Color.BLACK;
-        panelHeight = frameHeight - menuBarHeight - buttonBarHeight;
-        displayGUI();
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param application
+	 *            thid gui's application
+	 */
+	public DrawGUIs(Draw application) {
+		super("Draw");
+		app = application;
+		color = Color.BLACK;
+		panelHeight = frameHeight - menuBarHeight;
+		displayGUI();
+	}
 
     public void displayGUI()
     {
@@ -78,7 +80,7 @@ public class DrawGUIs extends JFrame
         // selector for drawing modes
         final Choice shape_chooser = new Choice();
         ShapeManager shapeManager = new ShapeManager(panel, this);
-        for (final Entry<String, ShapeDrawer> enp : shapeManager.getDrawers())
+        for (final Entry<String, ShapeDrawer> enp : shapeManager.getDrawerSet())
         {
             shape_chooser.add(enp.getKey());
             System.out.println(enp.getKey());

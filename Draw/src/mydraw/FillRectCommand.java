@@ -5,14 +5,23 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.List;
 
-public class FillRectCommand implements Drawable
-{
+/**
+ * Command to draw a filled rectangle.
+ */
+public class FillRectCommand implements Drawable {
     private final Point pressed;
 
     private final Point released;
 
     private final Color color;
 
+    /**
+     * Constructor.
+     *
+     * @param pressed  point where mouse was pressed
+     * @param released point where mouse was released
+     * @param color    color
+     */
     public FillRectCommand(Point pressed, Point released, Color color) {
         this.pressed = pressed;
         this.released = released;
