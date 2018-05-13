@@ -33,7 +33,7 @@ public class DrawGUIs extends JFrame
 {
     private BufferedImage bImg;
     private Color color;
-    private JPanel panel;
+    private DrawingPanel panel;
     private final Map<String, Color> cm = new LinkedHashMap<String, Color>()
     {
         private static final long serialVersionUID = 1L;
@@ -73,7 +73,7 @@ public class DrawGUIs extends JFrame
     public void displayGUI()
     {
         // Create the Contentpanel.
-        panel = new JPanel();
+        panel = new DrawingPanel();
         panel.setBackground(Color.WHITE);
         panel.setPreferredSize(new Dimension(frameWidth, panelHeight));
 

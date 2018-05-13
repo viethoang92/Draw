@@ -38,6 +38,7 @@ public final class OvalCommand implements Drawable {
 		final int width = Math.abs(pressed.x - released.x);
 		final int height = Math.abs(pressed.y - released.y);
 
+		g.setPaintMode();
 		g.setColor(color);
 		g.drawOval(x, y, width, height);
 	}
