@@ -14,6 +14,17 @@ public class FillOvalCommand extends OvalCommand {
 
     @Override
     public void draw(Graphics g) {
+        if (window.getShapeManager().getCurrentDrawer().getLastx() != -1) {
+            // first undraw a rubber rect
+            g.setXORMode(color);
+            g.setColor(window.getDrawingPanel().getBackground());
+            g.drawOval(x, y, width, height);
+
+            window.getShapeManager().getCurrentDrawer().setLastx(-1);
+            window.getShapeManager().getCurrentDrawer().setLasty(-1);
+
+
+        }
         g.setPaintMode();
         g.setColor(color);
         g.fillOval(x, y, width, height);

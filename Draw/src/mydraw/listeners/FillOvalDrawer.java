@@ -18,23 +18,6 @@ class FillOvalDrawer extends RectangleDrawer
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        final Graphics g = window.getDrawingPanel().getGraphics();
-        final Graphics gb = window.getBufferedImage()
-                .createGraphics();
-
-        if (lastx != -1)
-        {
-            // first undraw a rubber rect
-            g.setXORMode(window.getColor());
-            g.setColor(window.getDrawingPanel().getBackground());
-            doDraw(pressx, pressy, lastx, lasty, g);
-
-            gb.setXORMode(window.getColor());
-            gb.setColor(window.getDrawingPanel().getBackground());
-            doDraw(pressx, pressy, lastx, lasty, g);
-            lastx = -1;
-            lasty = -1;
-        }
         // these commands finish the rubberband mode
         // draw the final oval
         window.getApp().drawFilledOval(new Point(pressx, pressy),

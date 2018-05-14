@@ -30,10 +30,6 @@ public class RectangleDrawer extends ShapeDrawer {
     // and draw the resulting shape
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(lastx != -1)
-        {
-
-        }
         // these commands finish the rubberband mode
         // draw the final rectangle
         window.getApp().drawRectangle(new Point(pressx, pressy),
