@@ -83,28 +83,27 @@ public class DrawGUIs extends JFrame {
         tb.setPreferredSize(new Dimension(frameWidth, buttonBarHeight));
 
         // selector for drawing modes
-        ArrayList<String> shape_list = new ArrayList<>();
+        final Choice shape_chooser = new Choice();
         ShapeManager shapeManager = new ShapeManager(panel, this);
         for (final Entry<String, ShapeDrawer> enp : shapeManager.getDrawerSet()) {
-            shape_list.add(enp.getKey());
+            shape_chooser.add(enp.getKey());
         }
-        String[] shapes = shape_list.toArray(new String[shape_list.size()]);
-        final JComboBox shape_chooser = new JComboBox(shapes);
         shape_chooser.addItemListener(shapeManager);
 
-        // array of colors
-        ArrayList<String> color_list = new ArrayList<>();
-        for (final Entry<String, Color> enp : cm.entrySet()) {
-            color_list.add(enp.getKey());
-        }
-        String[] colors = color_list.toArray(new String[color_list.size()]);
-
         // selector for drawing colors
-        final JComboBox color_chooser = new JComboBox(colors);
+        final Choice color_chooser = new Choice();
+        for (final Entry<String, Color> enp : cm.entrySet())
+        {
+            color_chooser.add(enp.getKey());
+        }
         color_chooser.addItemListener(new ColorItemListener());
 
         // selector for backgroundcolors
-        final JComboBox bgColor_chooser = new JComboBox(colors);
+        final Choice bgColor_chooser = new Choice();
+        for (final Entry<String, Color> enp : cm.entrySet())
+        {
+            bgColor_chooser.add(enp.getKey());
+        }
         bgColor_chooser.addItemListener(new BgColorItemListener());
 
 
@@ -306,6 +305,7 @@ public class DrawGUIs extends JFrame {
             if (newColor != null) {
                 panel.setBackground(newColor);
             }
+
         }
     }
 }

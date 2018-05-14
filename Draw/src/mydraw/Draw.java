@@ -222,7 +222,13 @@ public class Draw {
         return ImageIO.read(new File(filename));
     }
 
+    /**
+     *
+     * @param name filename
+     * @throws TxtIOException
+     */
     public void writeText(String name) throws TxtIOException {
+        // TODO writeText
         JFileChooser jfc = new JFileChooser();
         int retVal = jfc.showSaveDialog(null);
         if (retVal == JFileChooser.APPROVE_OPTION) {
@@ -236,13 +242,12 @@ public class Draw {
             }
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     public void readText(String name) throws TxtIOException {
-
+        // TODO readText
     }
 
     /**

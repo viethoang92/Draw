@@ -10,12 +10,16 @@ import java.awt.Point;
 public class RectangleCommand implements Drawable
 {
 
-    private final Point pressed;
+    final Point pressed;
 
-    private final Point released;
+    final Point released;
 
-    private final Color color;
+    final Color color;
 
+    final int x;
+    final int y;
+    final int width;
+    final int height;
 
     /**
      * Constructor.
@@ -32,16 +36,16 @@ public class RectangleCommand implements Drawable
         this.pressed = pressed;
         this.released = released;
         this.color = color;
+
+        x = Math.min(pressed.x, released.x);
+        y = Math.min(pressed.y, released.y);
+        width = Math.abs(pressed.x - released.x);
+        height = Math.abs(pressed.y - released.y);
     }
 
     @Override
     public void draw(Graphics g)
     {
-        final int x = Math.min(pressed.x, released.x);
-        final int y = Math.min(pressed.y, released.y);
-        final int width = Math.abs(pressed.x - released.x);
-        final int height = Math.abs(pressed.y - released.y);
-
         g.setPaintMode();
         g.setColor(color);
         g.drawRect(x, y, width, height);

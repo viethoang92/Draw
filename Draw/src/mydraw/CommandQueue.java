@@ -1,6 +1,8 @@
 package mydraw;
 
+import javax.swing.plaf.ColorUIResource;
 import java.awt.Graphics;
+import java.sql.SQLOutput;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,11 +21,16 @@ public final class CommandQueue {
 	 * @param command drawable element
 	 */
 	public static void add(Drawable command) {
+		System.out.println("add " + CURRENT_INDEX);
 		CURRENT_INDEX++;
 		for (int i = CURRENT_INDEX; i < QUEUE.size(); i++) {
 			QUEUE.remove(i);
 		}
 		QUEUE.add(command);
+
+		System.out.println("current index: " + CURRENT_INDEX);
+		System.out.println("queue size: " + QUEUE.size() + "\n");
+
 	}
 
 	/**
@@ -32,10 +39,13 @@ public final class CommandQueue {
 	 * @param g Graphics object to draw on.
 	 */
 	public static void redraw(Graphics g) {
-		System.out.println("redraw");
+		System.out.println("redraw " + CURRENT_INDEX);
 		for (int i = 0; i < CURRENT_INDEX; i++) {
 			QUEUE.get(i).draw(g);
 		}
+
+		System.out.println("current index: " + CURRENT_INDEX);
+		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 	/**
@@ -44,11 +54,13 @@ public final class CommandQueue {
 	 * @param g Graphics object to draw on
 	 */
 	public static void undo(Graphics g) {
-		System.out.println(CURRENT_INDEX);
+		System.out.println("undo " + CURRENT_INDEX);
 		if (CURRENT_INDEX > 0) {
 			CURRENT_INDEX--;
 			redraw(g);
 		}
+		System.out.println("current index: " + CURRENT_INDEX);
+		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 	/**
@@ -61,6 +73,8 @@ public final class CommandQueue {
 			CURRENT_INDEX++;
 			redraw(g);
 		}
+		System.out.println("current index: " + CURRENT_INDEX);
+		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 

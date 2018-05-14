@@ -246,7 +246,7 @@ class ShapeManager implements ItemListener {
                 lasty = -1;
             }
             // these commands finish the rubberband mode
-            // draw the final rectangle
+            // draw the final oval
             cmd.draw(g);
             cmd.draw(gb);
             CommandQueue.add(cmd);
@@ -273,7 +273,7 @@ class ShapeManager implements ItemListener {
             final Graphics gb = window.getBufferedImage()
                 .createGraphics();
             final Drawable cmd = new FillRectCommand(new Point(pressx, pressy),
-                    new Point(lastx, lasty), window.getColor());
+                    new Point(e.getX(), e.getY()), window.getColor());
 
             if (lastx != -1)
             {
@@ -294,12 +294,23 @@ class ShapeManager implements ItemListener {
             cmd.draw(gb);
             CommandQueue.add(cmd);
         }
+
+        @Override
+        public void doDraw(int x0, int y0, int x1, int y1, Graphics g)
+        {
+            final int x = Math.min(x0, x1);
+            final int y = Math.min(y0, y1);
+            final int w = Math.abs(x1 - x0);
+            final int h = Math.abs(y1 - y0);
+            // draw oval instead of rectangle
+            g.fillRect(x, y, w, h);
+        }
     }
 
     /**
      * ShapeDrawer for filled ovals
      */
-    class FillOvalDrawer extends OvalDrawer
+    class FillOvalDrawer extends RectangleDrawer
 
     {
         @Override
@@ -325,7 +336,7 @@ class ShapeManager implements ItemListener {
                 lasty = -1;
             }
             // these commands finish the rubberband mode
-            // draw the final rectangle
+            // draw the final oval
             cmd.draw(g);
             cmd.draw(gb);
             CommandQueue.add(cmd);
