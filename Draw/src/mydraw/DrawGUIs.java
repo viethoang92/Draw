@@ -85,7 +85,7 @@ public class DrawGUIs extends JFrame {
 
         // selector for drawing modes
         final Choice shape_chooser = new Choice();
-        ShapeManager shapeManager = new ShapeManager(panel, this);
+        ShapeManager shapeManager = new ShapeManager(panel, this, app);
         for (final Entry<String, ShapeDrawer> enp : shapeManager.getDrawerSet()) {
             shape_chooser.add(enp.getKey());
         }

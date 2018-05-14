@@ -23,6 +23,7 @@ import javax.swing.JPanel;
  */
 class ShapeManager implements ItemListener {
 
+    private final Draw app;
     private final JPanel panel;
     private final DrawGUIs window;
     private final ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
@@ -50,13 +51,13 @@ class ShapeManager implements ItemListener {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param itsPanel
+	 *  @param itsPanel
 	 *            drawing panel
 	 * @param itsGUI
-	 *            this application's gui
-	 */
-	public ShapeManager(JPanel itsPanel, DrawGUIs itsGUI) {
+     * @param itsApp
+     */
+	public ShapeManager(JPanel itsPanel, DrawGUIs itsGUI, Draw itsApp) {
+	    this.app = itsApp;
 		this.window = itsGUI;
 		this.panel = itsPanel;
 		// default: scribble mode
@@ -101,9 +102,7 @@ class ShapeManager implements ItemListener {
         public void mouseReleased(MouseEvent e)
         {
             final Graphics g = panel.getGraphics();
-            final ScribbleCommand cmd = new ScribbleCommand(points,
-                    window.getColor());
-            CommandQueue.add(cmd);
+            app.drawPolyLine(points);
             points.clear();
         }
 
@@ -150,8 +149,6 @@ class ShapeManager implements ItemListener {
             final Graphics g = panel.getGraphics();
             final Graphics gb = window.getBufferedImage()
                 .createGraphics();
-            final Drawable cmd = new RectangleCommand(new Point(pressx, pressy),
-                    new Point(e.getX(), e.getY()), window.getColor());
 
             if (lastx != -1)
             {
@@ -168,9 +165,9 @@ class ShapeManager implements ItemListener {
             }
             // these commands finish the rubberband mode
             // draw the final rectangle
-            cmd.draw(g);
-            cmd.draw(gb);
-            CommandQueue.add(cmd);
+            app.drawRectangle(new Point(pressx, pressy),
+                    new Point(e.getX(), e.getY()));
+
         }
 
 		// mouse released => temporarily set second corner of rectangle
@@ -229,9 +226,6 @@ class ShapeManager implements ItemListener {
             final Graphics g = panel.getGraphics();
             final Graphics gb = window.getBufferedImage()
                 .createGraphics();
-            final Drawable cmd = new OvalCommand(new Point(pressx, pressy),
-                    new Point(e.getX(), e.getY()), window.getColor());
-
             if (lastx != -1)
             {
                 // first undraw a rubber rect
@@ -247,9 +241,8 @@ class ShapeManager implements ItemListener {
             }
             // these commands finish the rubberband mode
             // draw the final oval
-            cmd.draw(g);
-            cmd.draw(gb);
-            CommandQueue.add(cmd);
+            app.drawOval(new Point(pressx, pressy),
+                    new Point(e.getX(), e.getY()));
         }
 
         @Override
@@ -272,8 +265,6 @@ class ShapeManager implements ItemListener {
             final Graphics g = panel.getGraphics();
             final Graphics gb = window.getBufferedImage()
                 .createGraphics();
-            final Drawable cmd = new FillRectCommand(new Point(pressx, pressy),
-                    new Point(e.getX(), e.getY()), window.getColor());
 
             if (lastx != -1)
             {
@@ -290,9 +281,8 @@ class ShapeManager implements ItemListener {
             }
             // these commands finish the rubberband mode
             // draw the final rectangle
-            cmd.draw(g);
-            cmd.draw(gb);
-            CommandQueue.add(cmd);
+            app.drawFilledRectangle(new Point(pressx, pressy),
+                    new Point(e.getX(), e.getY()));
         }
 
         @Override
@@ -335,11 +325,8 @@ class ShapeManager implements ItemListener {
             }
             // these commands finish the rubberband mode
             // draw the final oval
-            final Drawable cmd = new FillOvalCommand(new Point(pressx, pressy),
-                    new Point(e.getX(), e.getY()), window.getColor());
-            cmd.draw(g);
-            cmd.draw(gb);
-            CommandQueue.add(cmd);
+            app.drawFilledOval(new Point(pressx, pressy),
+                    new Point(e.getX(), e.getY()));
         }
 
         @Override

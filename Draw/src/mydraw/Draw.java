@@ -156,6 +156,32 @@ public class Draw {
     }
 
     /**
+     * Draws a filled rectangle.
+     *
+     * @param upper_left  top left corner
+     * @param lower_right bottom right corner
+     */
+    public void drawFilledRectangle(Point upper_left, Point lower_right) {
+        final FillRectCommand cmd = new FillRectCommand(upper_left, lower_right, window.getColor());
+        cmd.draw(window.getDrawingPanel().getGraphics());
+        cmd.draw(window.getBufferedImage().createGraphics());
+        CommandQueue.add(cmd);
+    }
+
+    /**
+     * Draws an oval.
+     *
+     * @param upper_left  top left corner
+     * @param lower_right bottom right corner
+     */
+    public void drawFilledOval(Point upper_left, Point lower_right) {
+        final FillOvalCommand cmd = new FillOvalCommand(upper_left, lower_right, window.getColor());
+        cmd.draw(window.getDrawingPanel().getGraphics());
+        cmd.draw(window.getBufferedImage().createGraphics());
+        CommandQueue.add(cmd);
+    }
+
+    /**
      * Returns the current drawing.
      *
      * @return drawing
@@ -244,9 +270,7 @@ public class Draw {
     public void readText(String fileName) throws TxtIOException, FileNotFoundException {
         try (FileInputStream fi = new FileInputStream(new File(fileName))) {
             ObjectInputStream oi = new ObjectInputStream(fi);
-            List<Drawable> queue = new LinkedList<>();
-
-            CommandQueue.setQueue((List<Drawable>)oi.readObject());
+            CommandQueue.setQueue((List<Drawable>) oi.readObject());
             oi.close();
         } catch (IOException e) {
         } catch (ClassNotFoundException e) {
