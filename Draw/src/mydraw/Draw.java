@@ -1,23 +1,22 @@
 package mydraw;
 
+import mydraw.commands.*;
+
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 
 public class Draw {
     private final DrawGUIs window;
 
     public Draw() {
-        window = new DrawGUIs(this);
+        this.window = new DrawGUIs(this);
     }
 
     public static void main(String[] args) {
@@ -41,8 +40,9 @@ public class Draw {
      */
     public void setFGColor(String new_color) throws ColorException {
         final Color color = window.getColorMap().get(new_color.toLowerCase());
-        if (color != null)
+        if (color != null) {
             window.setColor(color);
+        }
         else
             throw new ColorException();
     }
@@ -93,18 +93,9 @@ public class Draw {
         final Color color = window.getColorMap()
                 .get(new_color.toLowerCase());
         if (color != null) {
-
             window.getDrawingPanel().setBackground(color);
         } else
             throw new ColorException();
-
-        final Graphics g = window.getDrawingPanel()
-                .getGraphics();
-        g.setColor(window.getDrawingPanel().getBackground());
-
-        final Graphics gb = window.getBufferedImage()
-                .createGraphics();
-        gb.setColor(window.getDrawingPanel().getBackground());
     }
 
     /**
@@ -124,7 +115,7 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawRectangle(Point upper_left, Point lower_right) {
-        final RectangleCommand cmd = new RectangleCommand(upper_left, lower_right, window.getColor());
+        final RectangleCommand cmd = new RectangleCommand(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -137,7 +128,7 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawOval(Point upper_left, Point lower_right) {
-        final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window.getColor());
+        final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -149,12 +140,22 @@ public class Draw {
      * @param points list of points
      */
     public void drawPolyLine(java.util.List<Point> points) {
-        final ScribbleCommand cmd = new ScribbleCommand(points, window.getColor());
+        final ScribbleCommand cmd = new ScribbleCommand(points, window);
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
+
     }
 
+    /**
+     * Draws a polyline.
+     *
+     */
+    public void drawLine(int x, int y) {
+        final LineCommand cmd = new LineCommand(x, y , window);
+        cmd.draw(window.getDrawingPanel().getGraphics());
+        cmd.draw(window.getBufferedImage().createGraphics());
+    }
     /**
      * Draws a filled rectangle.
      *
@@ -162,20 +163,20 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawFilledRectangle(Point upper_left, Point lower_right) {
-        final FillRectCommand cmd = new FillRectCommand(upper_left, lower_right, window.getColor());
+        final FillRectCommand cmd = new FillRectCommand(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
     }
 
     /**
-     * Draws an oval.
+     * Draws a filled oval.
      *
      * @param upper_left  top left corner
      * @param lower_right bottom right corner
      */
     public void drawFilledOval(Point upper_left, Point lower_right) {
-        final FillOvalCommand cmd = new FillOvalCommand(upper_left, lower_right, window.getColor());
+        final FillOvalCommand cmd = new FillOvalCommand(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -195,7 +196,8 @@ public class Draw {
      */
     public void clear() {
         final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
-                window.getDrawingPanel().getBackground());
+                window, window.getDrawingPanel().getBackground());
+
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -294,7 +296,7 @@ public class Draw {
         window.getDrawingPanel().updateUI();
     }
 
-    private String getKey(Color color) {
+    public String getKey(Color color) {
         for (final String key : window.getColorMap().keySet()) {
             if (window.getColorMap().get(key).equals(color))
                 return key;

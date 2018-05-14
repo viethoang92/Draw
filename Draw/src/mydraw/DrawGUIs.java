@@ -1,5 +1,9 @@
 package mydraw;
 
+import mydraw.commands.CommandQueue;
+import mydraw.listeners.ShapeDrawer;
+import mydraw.listeners.ShapeManager;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +21,6 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import mydraw.ShapeManager.ShapeDrawer;
 
 /**
  * This class implements the GUI for our application
@@ -26,7 +29,7 @@ public class DrawGUIs extends JFrame {
     private BufferedImage bImg;
     private Color color;
     private DrawingPanel panel;
-    private final Map<String, Color> cm = new LinkedHashMap<String, Color>() {
+    private final Map<String, Color> cm = new LinkedHashMap<>() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -40,6 +43,7 @@ public class DrawGUIs extends JFrame {
     };
 
     private final Draw app;
+    private ShapeManager shapeManager;
     private final int frameWidth = 800;
     private final int frameHeight = 500;
     private final int menuBarHeight = 20;
@@ -55,17 +59,20 @@ public class DrawGUIs extends JFrame {
      */
     public DrawGUIs(Draw application) {
         super("Draw");
-        app = application;
-        color = Color.BLACK;
-        panelHeight = frameHeight - menuBarHeight;
+        this.app = application;
+        this.color = Color.BLACK;
+        this.panelHeight = frameHeight - menuBarHeight;
         displayGUI();
     }
 
     public void displayGUI() {
+
         // Create the Contentpanel.
         panel = new DrawingPanel();
         panel.setBackground(Color.WHITE);
+        panel.setOpaque(true);
         panel.setPreferredSize(new Dimension(frameWidth, panelHeight));
+        shapeManager = new ShapeManager(panel, this);
 
         // Create menu bar
         JMenuBar mb = new JMenuBar();
@@ -85,7 +92,7 @@ public class DrawGUIs extends JFrame {
 
         // selector for drawing modes
         final Choice shape_chooser = new Choice();
-        ShapeManager shapeManager = new ShapeManager(panel, this, app);
+
         for (final Entry<String, ShapeDrawer> enp : shapeManager.getDrawerSet()) {
             shape_chooser.add(enp.getKey());
         }
@@ -93,16 +100,14 @@ public class DrawGUIs extends JFrame {
 
         // selector for drawing colors
         final Choice color_chooser = new Choice();
-        for (final Entry<String, Color> enp : cm.entrySet())
-        {
+        for (final Entry<String, Color> enp : cm.entrySet()) {
             color_chooser.add(enp.getKey());
         }
         color_chooser.addItemListener(new ColorItemListener());
 
         // selector for backgroundcolors
         final Choice bgColor_chooser = new Choice();
-        for (final Entry<String, Color> enp : cm.entrySet())
-        {
+        for (final Entry<String, Color> enp : cm.entrySet()) {
             bgColor_chooser.add(enp.getKey());
         }
         bgColor_chooser.addItemListener(new BgColorItemListener());
@@ -181,9 +186,6 @@ public class DrawGUIs extends JFrame {
         redo.addActionListener(new DrawActionListener("redo"));
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponents(g);
-    }
 
     /**
      * This is the application method that processes commands sent by the GUI
@@ -206,7 +208,7 @@ public class DrawGUIs extends JFrame {
                 if (retVal == JFileChooser.APPROVE_OPTION) {
                     File f = jfc.getSelectedFile();
                     String test = f.getAbsolutePath();
-                    ImageIO.write((BufferedImage) bImg, "png", new File(test));
+                    ImageIO.write( bImg, "png", new File(test));
                 }
             } catch (final IOException e) {
                 e.printStackTrace();
@@ -223,7 +225,7 @@ public class DrawGUIs extends JFrame {
             } catch (TxtIOException e) {
                 e.printStackTrace();
             }
-        }else if (command.equals("txtRead")) {
+        } else if (command.equals("txtRead")) {
             JFileChooser jfc = new JFileChooser();
             int retVal = jfc.showOpenDialog(null);
             if (retVal == JFileChooser.APPROVE_OPTION) {
@@ -237,7 +239,7 @@ public class DrawGUIs extends JFrame {
                     e.printStackTrace();
                 }
             }
-            } else if (command.equals("undo")) {
+        } else if (command.equals("undo")) {
             app.undo();
         } else if (command.equals("redo")) {
             app.redo();
@@ -289,6 +291,14 @@ public class DrawGUIs extends JFrame {
         return bImg;
     }
 
+    public Draw getApp() {
+        return app;
+    }
+
+    public ShapeManager getShapeManager() {
+        return shapeManager;
+    }
+
     // Here's a local class used for action listeners for the buttons
     class DrawActionListener implements ActionListener {
         private final String command;
@@ -307,10 +317,12 @@ public class DrawGUIs extends JFrame {
         // user selected new color => store new color in DrawGUIs
         @Override
         public void itemStateChanged(ItemEvent e) {
-            final Color newColor = cm.get(e.getItem());
-            if (newColor != null) {
-                color = cm.get(e.getItem());
-            }
+
+            Color newColor = cm.get(e.getItem());
+            color = newColor;
+            panel.updateUI();
+
+
         }
     }
 
@@ -318,11 +330,18 @@ public class DrawGUIs extends JFrame {
         // user selected new color => store new color in DrawGUIs
         @Override
         public void itemStateChanged(ItemEvent e) {
-            final Color newColor = cm.get(e.getItem());
-            if (newColor != null) {
-                panel.setBackground(newColor);
-            }
+//            try {
+//                app.setBGColor(app.getKey(cm.get(e.getItem())));
+//            } catch (ColorException e1) {
+//                e1.printStackTrace();
+//            }
+            Color newColor = cm.get(e.getItem());
+            panel.setBackground(newColor);
+            app.clear();
+            CommandQueue.redraw(getDrawingPanel().getGraphics());
+            CommandQueue.redraw(getBufferedImage().createGraphics());
 
+            panel.updateUI();
         }
     }
 }

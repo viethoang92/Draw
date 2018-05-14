@@ -1,5 +1,7 @@
 package mydraw;
 
+import mydraw.commands.CommandQueue;
+
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -14,6 +16,7 @@ public final class DrawingPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		System.out.println("paint component redraw");
 		CommandQueue.redraw(g);
 	}
 }
