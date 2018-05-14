@@ -28,6 +28,8 @@ import javax.swing.*;
  * This class implements the GUI for our application
  */
 public class DrawGUIs extends JFrame {
+    // TODO add read image button
+    // TODO translate everything to english
     private BufferedImage bImg;
     private Color color;
     private DrawingPanel panel;
@@ -204,13 +206,12 @@ public class DrawGUIs extends JFrame {
             app.autoDraw();
         } else if (command.equals("save")) {
             try {
-//                app.writeImage(bImg, "mybImg.png");
                 JFileChooser jfc = new JFileChooser();
                 int retVal = jfc.showSaveDialog(null);
                 if (retVal == JFileChooser.APPROVE_OPTION) {
                     File f = jfc.getSelectedFile();
                     String test = f.getAbsolutePath();
-                    ImageIO.write( bImg, "png", new File(test));
+                    app.writeImage(bImg, test);
                 }
             } catch (final IOException e) {
                 e.printStackTrace();

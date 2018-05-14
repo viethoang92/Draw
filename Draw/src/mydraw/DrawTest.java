@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
  * Test class for {@link Draw}.
  */
 final class DrawTest {
+
+    // TODO add tests for new functions
     private final Draw window;
 
     DrawTest() {

@@ -151,6 +151,8 @@ public class Draw {
     /**
      * Draws a polyline.
      *
+     * @param x x
+     * @param y y
      */
     public void drawLine(int x, int y) {
         final LineCommand cmd = new LineCommand(x, y , window);
@@ -193,7 +195,7 @@ public class Draw {
     }
 
     /**
-     * Clears drawing panel.
+     * Clears drawing panel by drawing a filled rectangle
      */
     public void clear() {
         final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
@@ -208,7 +210,7 @@ public class Draw {
      * Draws a predefined image.
      */
     public void autoDraw() {
-
+        // TODO add new functionality
         try {
             setBGColor("blue");
             clear();
