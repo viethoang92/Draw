@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 /**
  * Drawing panel class to override paintComponent method.
  */
-public final class DrawingPanel extends JPanel {
+final class DrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 

@@ -64,17 +64,6 @@ public final class CommandQueue {
 		}
 	}
 
-	/**
-	 * Deletes all elements in queue.
-	 *
-	 * @param g Graphics object to draw on
-	 */
-	public static void clear(Graphics g) {
-		QUEUE.clear();
-		}
-
-
-
 	public static List<Drawable> getQueue() {
 		return QUEUE;
 	}

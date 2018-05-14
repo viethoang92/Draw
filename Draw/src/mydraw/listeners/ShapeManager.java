@@ -33,10 +33,10 @@ public class ShapeManager implements ItemListener {
 	 * Constructor.
 	 *  @param itsPanel
 	 *            drawing panel
-	 * @param itsGUI
+	 * @param itsGUI the gui window
      */
 	public ShapeManager(JPanel itsPanel, DrawGUIs itsGUI) {
-		this.window = itsGUI;
+		window = itsGUI;
 		this.panel = itsPanel;
         scribbleDrawer = new ScribbleDrawer(window);
         rectDrawer = new RectangleDrawer(window);
@@ -67,7 +67,7 @@ public class ShapeManager implements ItemListener {
      * @param drawer
      *            new drawer
      */
-    public void setCurrentDrawer(ShapeDrawer drawer)
+    private void setCurrentDrawer(ShapeDrawer drawer)
     {
         if (currentDrawer == drawer) return;
 

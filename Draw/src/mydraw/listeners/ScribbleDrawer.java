@@ -14,10 +14,11 @@ import java.util.List;
  */
 public class ScribbleDrawer extends ShapeDrawer
 {
-    int lastx, lasty;
+    private int lastx;
+    private int lasty;
 
     private final List<Point> points = new ArrayList<>();
-    private DrawGUIs window;
+    private final DrawGUIs window;
 
     public ScribbleDrawer(DrawGUIs window) {
         this.window = window;

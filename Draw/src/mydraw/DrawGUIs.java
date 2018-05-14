@@ -67,7 +67,7 @@ public class DrawGUIs extends JFrame {
         displayGUI();
     }
 
-    public void displayGUI() {
+    private void displayGUI() {
 
         // Create the Contentpanel.
         panel = new DrawingPanel();
@@ -192,7 +192,7 @@ public class DrawGUIs extends JFrame {
     /**
      * This is the application method that processes commands sent by the GUI
      */
-    public void doCommand(String command) {
+    private void doCommand(String command) {
         if (command.equals("clear")) { // clear the GUI window
             // It would be more modular to include this functionality in the GUI
             // class itself. But for demonstration purposes, we do it here.
@@ -234,7 +234,7 @@ public class DrawGUIs extends JFrame {
                 File f = jfc.getSelectedFile();
                 String name = f.getAbsolutePath();
                 try {
-                    app.readText(f.getAbsolutePath());
+                    app.readText(name);
                 } catch (TxtIOException e) {
                     e.printStackTrace();
                 } catch (FileNotFoundException e) {

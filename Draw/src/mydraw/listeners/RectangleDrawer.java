@@ -13,7 +13,8 @@ import java.awt.event.MouseEvent;
 public class RectangleDrawer extends ShapeDrawer {
     final DrawGUIs window;
     int pressx, pressy;
-    public int lastx = -1, lasty = -1;
+    private int lastx = -1;
+    private int lasty = -1;
     public RectangleDrawer(DrawGUIs window){
         this.window = window;
     }

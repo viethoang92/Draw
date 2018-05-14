@@ -6,9 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 /**
- * Return the key set of the ShapeDrawers.
- *
- * @return key set
+ * Listens to Mouse actions but ignores mouse movements
  */
 public abstract class ShapeDrawer extends MouseAdapter
         implements MouseMotionListener {

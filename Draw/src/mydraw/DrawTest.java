@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class for {@link Draw}.
  */
-public final class DrawTest {
+final class DrawTest {
     private final Draw window;
 
-    public DrawTest() {
+    DrawTest() {
         window = new Draw();
     }
 

@@ -11,13 +11,10 @@ import java.io.Serializable;
  * Command to draw rectangles.
  */
 public class RectangleCommand implements Drawable, Serializable {
-    DrawGUIs window;
-
-    final Point pressed;
-
-    final Point released;
-
+    final DrawGUIs window;
     final Color color;
+    final Point pressed;
+    final Point released;
     final int x;
     final int y;
     final int width;

@@ -229,7 +229,7 @@ public class Draw {
      *
      * @param img      image
      * @param filename filename
-     * @throws IOException
+     * @throws IOException if an input or output expression occurred
      */
     public void writeImage(Image img, String filename) throws IOException {
         ImageIO.write((RenderedImage) img, "PNG", new File(filename));
@@ -240,7 +240,7 @@ public class Draw {
      *
      * @param filename filename
      * @return Image image
-     * @throws IOException
+     * @throws IOException if an input or output expression occurred
      */
     public Image readImage(String filename) throws IOException {
         return ImageIO.read(new File(filename));
@@ -250,34 +250,39 @@ public class Draw {
      * Saves a CommandQueue as a .dat file
      *
      * @param fileName filename
-     * @throws TxtIOException
+     * @throws TxtIOException if an text input or text output expression occurred
      */
     public void writeText(String fileName) throws TxtIOException {
-        try (FileOutputStream fout = new FileOutputStream(fileName)) {
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(CommandQueue.getQueue());
-            oos.close();
 
+        try (FileOutputStream fout = new FileOutputStream(fileName)) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
+                oos.writeObject(CommandQueue.getQueue());
+            } catch (IOException e) {
+                throw new TxtIOException();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TxtIOException();
         }
+
+
     }
+
 
     /**
      * Loads a CommandQueue in .dat format.
      *
      * @param fileName filename
-     * @throws TxtIOException
-     * @throws FileNotFoundException
+     * @throws TxtIOException if an text input exception occurred
      */
-    public void readText(String fileName) throws TxtIOException, FileNotFoundException {
+    public void readText(String fileName) throws TxtIOException {
         try (FileInputStream fi = new FileInputStream(new File(fileName))) {
-            ObjectInputStream oi = new ObjectInputStream(fi);
-            CommandQueue.setQueue((List<Drawable>) oi.readObject());
-            oi.close();
+            try(ObjectInputStream oi = new ObjectInputStream(fi)){
+                CommandQueue.setQueue((List<Drawable>) oi.readObject());
+            } catch (ClassNotFoundException e) {
+                throw new TxtIOException();
+            }
         } catch (IOException e) {
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new TxtIOException();
         }
     }
 
@@ -297,7 +302,7 @@ public class Draw {
         window.getDrawingPanel().updateUI();
     }
 
-    public String getKey(Color color) {
+    private String getKey(Color color) {
         for (final String key : window.getColorMap().keySet()) {
             if (window.getColorMap().get(key).equals(color))
                 return key;
