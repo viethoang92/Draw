@@ -45,7 +45,7 @@ public class RectangleCommand implements Drawable, Serializable {
 
         if (window.getShapeManager().getCurrentDrawer().getLastx() != -1) {
             // first undraw a rubber rect
-            g.setXORMode(window.getColor());
+            g.setXORMode(color);
             g.setColor(window.getDrawingPanel().getBackground());
             g.drawRect(x, y, width, height);
 
@@ -56,7 +56,7 @@ public class RectangleCommand implements Drawable, Serializable {
         }
 
             g.setPaintMode();
-            g.setColor(window.getColor());
+            g.setColor(color);
             g.drawRect(x, y, width, height);
 
 

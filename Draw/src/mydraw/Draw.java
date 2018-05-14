@@ -94,6 +94,7 @@ public class Draw {
                 .get(new_color.toLowerCase());
         if (color != null) {
             window.getDrawingPanel().setBackground(color);
+
         } else
             throw new ColorException();
     }

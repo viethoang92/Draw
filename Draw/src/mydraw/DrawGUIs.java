@@ -1,6 +1,8 @@
 package mydraw;
 
 import mydraw.commands.CommandQueue;
+import mydraw.listeners.BGColorItemListener;
+import mydraw.listeners.FGColorItemListener;
 import mydraw.listeners.ShapeDrawer;
 import mydraw.listeners.ShapeManager;
 
@@ -103,14 +105,14 @@ public class DrawGUIs extends JFrame {
         for (final Entry<String, Color> enp : cm.entrySet()) {
             color_chooser.add(enp.getKey());
         }
-        color_chooser.addItemListener(new ColorItemListener());
+        color_chooser.addItemListener(new FGColorItemListener(this));
 
         // selector for backgroundcolors
         final Choice bgColor_chooser = new Choice();
         for (final Entry<String, Color> enp : cm.entrySet()) {
             bgColor_chooser.add(enp.getKey());
         }
-        bgColor_chooser.addItemListener(new BgColorItemListener());
+        bgColor_chooser.addItemListener(new BGColorItemListener(this));
 
 
         // Create buttons
@@ -310,38 +312,6 @@ public class DrawGUIs extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             doCommand(command);
-        }
-    }
-
-    class ColorItemListener implements ItemListener {
-        // user selected new color => store new color in DrawGUIs
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-
-            Color newColor = cm.get(e.getItem());
-            color = newColor;
-            panel.updateUI();
-
-
-        }
-    }
-
-    class BgColorItemListener implements ItemListener {
-        // user selected new color => store new color in DrawGUIs
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-//            try {
-//                app.setBGColor(app.getKey(cm.get(e.getItem())));
-//            } catch (ColorException e1) {
-//                e1.printStackTrace();
-//            }
-            Color newColor = cm.get(e.getItem());
-            panel.setBackground(newColor);
-            app.clear();
-            CommandQueue.redraw(getDrawingPanel().getGraphics());
-            CommandQueue.redraw(getBufferedImage().createGraphics());
-
-            panel.updateUI();
         }
     }
 }
