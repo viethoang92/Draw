@@ -20,10 +20,14 @@ public final class CommandQueue {
 	 */
 	public static void add(Drawable command) {
 		System.out.println("add " + CURRENT_INDEX);
-		CURRENT_INDEX++;
-		for (int i = CURRENT_INDEX; i < QUEUE.size(); i++) {
-			QUEUE.remove(i);
-		}
+		if(CURRENT_INDEX < QUEUE.size()- 1) {
+		    List<Drawable> newQueue = new LinkedList<>();
+            for (int i = 0; i < CURRENT_INDEX; i++) {
+                newQueue.add(QUEUE.get(i));
+            }
+            QUEUE = newQueue;
+        }
+        CURRENT_INDEX++;
 		QUEUE.add(command);
 	}
 

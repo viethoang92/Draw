@@ -235,9 +235,8 @@ public class DrawGUIs extends JFrame {
                 String name = f.getAbsolutePath();
                 try {
                     app.readText(name);
+
                 } catch (TxtIOException e) {
-                    e.printStackTrace();
-                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
