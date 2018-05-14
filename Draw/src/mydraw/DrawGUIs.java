@@ -9,6 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -212,18 +213,34 @@ public class DrawGUIs extends JFrame {
             }
         } else if (command.equals("txtSave")) {
             try {
-                app.writeText("commands");
+                JFileChooser jfc = new JFileChooser();
+                int retVal = jfc.showSaveDialog(null);
+                if (retVal == JFileChooser.APPROVE_OPTION) {
+                    File f = jfc.getSelectedFile();
+                    String name = f.getAbsolutePath();
+                    app.writeText(name);
+                }
             } catch (TxtIOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        } else if (command.equals("txtRead")) {
-        } else if (command.equals("undo")) {
-            CommandQueue.undo(panel.getGraphics());
-            panel.updateUI();
+        }else if (command.equals("txtRead")) {
+            JFileChooser jfc = new JFileChooser();
+            int retVal = jfc.showOpenDialog(null);
+            if (retVal == JFileChooser.APPROVE_OPTION) {
+                File f = jfc.getSelectedFile();
+                String name = f.getAbsolutePath();
+                try {
+                    app.readText(f.getAbsolutePath());
+                } catch (TxtIOException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            } else if (command.equals("undo")) {
+            app.undo();
         } else if (command.equals("redo")) {
-            CommandQueue.redo(panel.getGraphics());
-            panel.updateUI();
+            app.redo();
         }
     }
 

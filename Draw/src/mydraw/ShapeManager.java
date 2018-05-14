@@ -319,8 +319,6 @@ class ShapeManager implements ItemListener {
             final Graphics g = panel.getGraphics();
             final Graphics gb = window.getBufferedImage()
                 .createGraphics();
-            final Drawable cmd = new FillOvalCommand(new Point(pressx, pressy),
-                    new Point(e.getX(), e.getY()), window.getColor());
 
             if (lastx != -1)
             {
@@ -337,6 +335,8 @@ class ShapeManager implements ItemListener {
             }
             // these commands finish the rubberband mode
             // draw the final oval
+            final Drawable cmd = new FillOvalCommand(new Point(pressx, pressy),
+                    new Point(e.getX(), e.getY()), window.getColor());
             cmd.draw(g);
             cmd.draw(gb);
             CommandQueue.add(cmd);

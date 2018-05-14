@@ -3,11 +3,12 @@ package mydraw;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.Serializable;
 
 /**
  * Command to draw ovals.
  */
-public class OvalCommand extends RectangleCommand {
+public class OvalCommand extends RectangleCommand{
 
     public OvalCommand(Point pressed, Point released, Color color) {
         super(pressed, released, color);

@@ -2,7 +2,9 @@ package mydraw;
 
 import javax.swing.plaf.ColorUIResource;
 import java.awt.Graphics;
+import java.io.IOException;
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
  */
 public final class CommandQueue {
 
-	private static final List<Drawable> QUEUE = new LinkedList<>();
+	private static List<Drawable> QUEUE = new LinkedList<>();
 
 	private static int CURRENT_INDEX = 0;
 
@@ -27,10 +29,6 @@ public final class CommandQueue {
 			QUEUE.remove(i);
 		}
 		QUEUE.add(command);
-
-		System.out.println("current index: " + CURRENT_INDEX);
-		System.out.println("queue size: " + QUEUE.size() + "\n");
-
 	}
 
 	/**
@@ -43,9 +41,6 @@ public final class CommandQueue {
 		for (int i = 0; i < CURRENT_INDEX; i++) {
 			QUEUE.get(i).draw(g);
 		}
-
-		System.out.println("current index: " + CURRENT_INDEX);
-		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 	/**
@@ -59,8 +54,6 @@ public final class CommandQueue {
 			CURRENT_INDEX--;
 			redraw(g);
 		}
-		System.out.println("current index: " + CURRENT_INDEX);
-		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 	/**
@@ -73,12 +66,14 @@ public final class CommandQueue {
 			CURRENT_INDEX++;
 			redraw(g);
 		}
-		System.out.println("current index: " + CURRENT_INDEX);
-		System.out.println("queue size: " + QUEUE.size()+ "\n");
 	}
 
 
 	public static List<Drawable> getQueue() {
 		return QUEUE;
+	}
+
+	public static void setQueue(List<Drawable> newQueue) {
+		QUEUE = newQueue;
 	}
 }

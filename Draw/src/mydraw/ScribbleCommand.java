@@ -3,13 +3,14 @@ package mydraw;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Command to draw polylines.
  */
-public class ScribbleCommand implements Drawable {
+public class ScribbleCommand implements Drawable, Serializable {
 
 	private final List<Point> points;
 

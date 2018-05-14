@@ -5,10 +5,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -93,11 +92,10 @@ public class Draw {
     public void setBGColor(String new_color) throws ColorException {
         final Color color = window.getColorMap()
                 .get(new_color.toLowerCase());
-        if (color != null){
+        if (color != null) {
 
             window.getDrawingPanel().setBackground(color);
-        }
-        else
+        } else
             throw new ColorException();
 
         final Graphics g = window.getDrawingPanel()
@@ -132,33 +130,30 @@ public class Draw {
         CommandQueue.add(cmd);
     }
 
-	/**
-	 * Draws an oval.
-	 *
-	 * @param upper_left
-	 *            top left corner
-	 * @param lower_right
-	 *            bottom right corner
-	 */
-	public void drawOval(Point upper_left, Point lower_right) {
-		final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window.getColor());
-		cmd.draw(window.getDrawingPanel().getGraphics());
-        cmd.draw(window.getBufferedImage().createGraphics());
-		CommandQueue.add(cmd);
-	}
-
-	/**
-	 * Draws a polyline.
-	 *
-	 * @param points
-	 *            list of points
-	 */
-	public void drawPolyLine(java.util.List<Point> points) {
-		final ScribbleCommand cmd = new ScribbleCommand(points, window.getColor());
-		cmd.draw(window.getDrawingPanel().getGraphics());
+    /**
+     * Draws an oval.
+     *
+     * @param upper_left  top left corner
+     * @param lower_right bottom right corner
+     */
+    public void drawOval(Point upper_left, Point lower_right) {
+        final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window.getColor());
+        cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
-	}
+    }
+
+    /**
+     * Draws a polyline.
+     *
+     * @param points list of points
+     */
+    public void drawPolyLine(java.util.List<Point> points) {
+        final ScribbleCommand cmd = new ScribbleCommand(points, window.getColor());
+        cmd.draw(window.getDrawingPanel().getGraphics());
+        cmd.draw(window.getBufferedImage().createGraphics());
+        CommandQueue.add(cmd);
+    }
 
     /**
      * Returns the current drawing.
@@ -169,16 +164,16 @@ public class Draw {
         return window.getBufferedImage();
     }
 
-	/**
-	 * Clears drawing panel.
-	 */
-	public void clear() {
-		final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
-				window.getDrawingPanel().getBackground());
-		cmd.draw(window.getDrawingPanel().getGraphics());
+    /**
+     * Clears drawing panel.
+     */
+    public void clear() {
+        final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
+                window.getDrawingPanel().getBackground());
+        cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-		CommandQueue.add(cmd);
-	}
+        CommandQueue.add(cmd);
+    }
 
     /**
      * Draws a predefined image.
@@ -223,31 +218,40 @@ public class Draw {
     }
 
     /**
+     * Saves a CommandQueue as a .dat file
      *
-     * @param name filename
+     * @param fileName filename
      * @throws TxtIOException
      */
-    public void writeText(String name) throws TxtIOException {
-        // TODO writeText
-        JFileChooser jfc = new JFileChooser();
-        int retVal = jfc.showSaveDialog(null);
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            File f = jfc.getSelectedFile();
-            name = f.getAbsolutePath();
-
-        }
-        try (FileWriter writer = new FileWriter(name)) {
-            for (Drawable str : CommandQueue.getQueue()) {
-                writer.write(str.toString());
-            }
+    public void writeText(String fileName) throws TxtIOException {
+        try (FileOutputStream fout = new FileOutputStream(fileName)) {
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(CommandQueue.getQueue());
+            oos.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void readText(String name) throws TxtIOException {
-        // TODO readText
+    /**
+     * Loads a CommandQueue in .dat format.
+     *
+     * @param fileName filename
+     * @throws TxtIOException
+     * @throws FileNotFoundException
+     */
+    public void readText(String fileName) throws TxtIOException, FileNotFoundException {
+        try (FileInputStream fi = new FileInputStream(new File(fileName))) {
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            List<Drawable> queue = new LinkedList<>();
+
+            CommandQueue.setQueue((List<Drawable>)oi.readObject());
+            oi.close();
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -255,6 +259,7 @@ public class Draw {
      */
     public void undo() {
         CommandQueue.undo(window.getDrawingPanel().getGraphics());
+        window.getDrawingPanel().updateUI();
     }
 
     /**
@@ -262,6 +267,7 @@ public class Draw {
      */
     public void redo() {
         CommandQueue.redo(window.getDrawingPanel().getGraphics());
+        window.getDrawingPanel().updateUI();
     }
 
     private String getKey(Color color) {
