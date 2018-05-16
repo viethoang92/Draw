@@ -16,25 +16,27 @@ public final class DrawableQueue {
 	/**
 	 * Adds a drawable element to the queue.
 	 *
-	 * @param command drawable element
+	 * @param command
+	 *            drawable element
 	 */
 	public static void add(Drawable command) {
 		System.out.println("add " + CURRENT_INDEX);
-		if(CURRENT_INDEX < QUEUE.size()- 1) {
-		    List<Drawable> newQueue = new LinkedList<>();
-            for (int i = 0; i < CURRENT_INDEX; i++) {
-                newQueue.add(QUEUE.get(i));
-            }
-            QUEUE = newQueue;
-        }
-        CURRENT_INDEX++;
+		if (CURRENT_INDEX < QUEUE.size() - 1) {
+			final List<Drawable> newQueue = new LinkedList<>();
+			for (int i = 0; i < CURRENT_INDEX; i++) {
+				newQueue.add(QUEUE.get(i));
+			}
+			QUEUE = newQueue;
+		}
+		CURRENT_INDEX++;
 		QUEUE.add(command);
 	}
 
 	/**
 	 * Redraws all elements in the queue to current state.
 	 *
-	 * @param g Graphics object to draw on.
+	 * @param g
+	 *            Graphics object to draw on.
 	 */
 	public static void redraw(Graphics g) {
 		System.out.println("redraw " + CURRENT_INDEX);
@@ -46,7 +48,8 @@ public final class DrawableQueue {
 	/**
 	 * Draws the image without the last element.
 	 *
-	 * @param g Graphics object to draw on
+	 * @param g
+	 *            Graphics object to draw on
 	 */
 	public static void undo(Graphics g) {
 		System.out.println("undo " + CURRENT_INDEX);
@@ -59,7 +62,8 @@ public final class DrawableQueue {
 	/**
 	 * Draws the image with the latest undone element.
 	 *
-	 * @param g Graphics object to draw on
+	 * @param g
+	 *            Graphics object to draw on
 	 */
 	public static void redo(Graphics g) {
 		if (CURRENT_INDEX < QUEUE.size()) {
@@ -68,8 +72,13 @@ public final class DrawableQueue {
 		}
 	}
 
+	/**
+	 * Returns a copy of the queue.
+	 *
+	 * @return queue
+	 */
 	public static List<Drawable> getQueue() {
-		return QUEUE;
+		return new LinkedList<>(QUEUE);
 	}
 
 	public static void setQueue(List<Drawable> newQueue) {
