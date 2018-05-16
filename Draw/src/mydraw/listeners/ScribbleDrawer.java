@@ -3,7 +3,7 @@ package mydraw.listeners;
 // if this class is active, the mouse is interpreted as a pen
 
 import mydraw.DrawGUIs;
-import mydraw.commands.ScribbleCommand;
+import mydraw.drawables.ScribbleDrawable;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

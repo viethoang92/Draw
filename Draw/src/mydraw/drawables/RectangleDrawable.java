@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 import mydraw.DrawGUIs;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Command to draw rectangles.
  */
-public class RectangleCommand implements Drawable, Serializable {
+public class RectangleDrawable implements Drawable, Serializable {
     /**
      * 
      */
@@ -30,7 +30,7 @@ public class RectangleCommand implements Drawable, Serializable {
      * @param pressed  point where mouse was pressed
      * @param released point where mouse was released
      */
-    public RectangleCommand(Point pressed, Point released, DrawGUIs window, Color color) {
+    public RectangleDrawable(Point pressed, Point released, DrawGUIs window, Color color) {
         this.pressed = pressed;
         this.released = released;
         this.window = window;
@@ -49,9 +49,6 @@ public class RectangleCommand implements Drawable, Serializable {
             g.setXORMode(color);
             g.setColor(window.getDrawingPanel().getBackground());
             g.drawRect(x, y, width, height);
-
-            window.getShapeManager().getCurrentDrawer().setLastx(-1);
-            window.getShapeManager().getCurrentDrawer().setLasty(-1);
 
 
         }

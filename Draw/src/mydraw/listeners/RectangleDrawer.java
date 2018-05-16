@@ -35,7 +35,6 @@ public class RectangleDrawer extends ShapeDrawer {
         // draw the final rectangle
         window.getApp().drawRectangle(new Point(pressx, pressy),
                 new Point(e.getX(), e.getY()));
-
     }
 
     // mouse released => temporarily set second corner of rectangle

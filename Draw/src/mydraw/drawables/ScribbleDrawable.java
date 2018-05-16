@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 import mydraw.DrawGUIs;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Command to draw polylines.
  */
-public class ScribbleCommand implements Drawable, Serializable {
+public class ScribbleDrawable implements Drawable, Serializable {
 
 	/**
      * 
@@ -20,8 +20,6 @@ public class ScribbleCommand implements Drawable, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final List<Point> points;
-
-	private final DrawGUIs window;
 	
 	private final Color color;
 
@@ -31,11 +29,10 @@ public class ScribbleCommand implements Drawable, Serializable {
 	 * @param points
 	 *            points of the polyline.
 	 */
-	public ScribbleCommand(List<Point> points, DrawGUIs window, Color color) {
+	public ScribbleDrawable(List<Point> points, Color color) {
 	    this.color = color;
 		this.points = new ArrayList<>();
 		this.points.addAll(points);
-		this.window = window;
 	}
 
 	@Override

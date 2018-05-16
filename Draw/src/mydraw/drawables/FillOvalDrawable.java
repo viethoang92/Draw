@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 import mydraw.DrawGUIs;
 
@@ -6,14 +6,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class FillOvalCommand extends OvalCommand {
+public class FillOvalDrawable extends OvalDrawable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    public FillOvalCommand(Point pressed, Point released, DrawGUIs window, Color color) {
+    public FillOvalDrawable(Point pressed, Point released, DrawGUIs window, Color color) {
         super(pressed, released, window, color);
     }
 

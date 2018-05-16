@@ -120,6 +120,7 @@ final class DrawTest {
         return true;
     }
     
+    
     @Test
     public void testUndoRedo() throws IOException, ColorException
     {
