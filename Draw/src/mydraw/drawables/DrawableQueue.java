@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 import java.awt.Graphics;
 import java.util.LinkedList;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Class for managing drawings of the current session.
  */
-public final class CommandQueue {
+public final class DrawableQueue {
 
 	private static List<Drawable> QUEUE = new LinkedList<>();
 

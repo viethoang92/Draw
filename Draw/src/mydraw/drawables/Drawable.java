@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 import java.awt.Graphics;
 

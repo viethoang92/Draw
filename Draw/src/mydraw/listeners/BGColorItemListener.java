@@ -1,8 +1,8 @@
 package mydraw.listeners;
 
 import mydraw.DrawGUIs;
-import mydraw.commands.CommandQueue;
-import mydraw.commands.Drawable;
+import mydraw.drawables.DrawableQueue;
+import mydraw.drawables.Drawable;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;

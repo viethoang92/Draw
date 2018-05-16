@@ -1,4 +1,4 @@
-package mydraw.commands;
+package mydraw.drawables;
 
 
 import mydraw.DrawGUIs;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Command to draw polylines.
  */
-public class LineCommand implements Drawable, Serializable {
+public class LineDrawable implements Drawable, Serializable {
 
     /**
      * 
@@ -24,7 +24,7 @@ public class LineCommand implements Drawable, Serializable {
      * Constructor.
      *
      */
-    public LineCommand(int x, int y, DrawGUIs window) {
+    public LineDrawable(int x, int y, DrawGUIs window) {
         this.x = x;
         this.y = y;
         this.window = window;

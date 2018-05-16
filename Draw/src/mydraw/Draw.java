@@ -1,7 +1,5 @@
 package mydraw;
 
-import mydraw.commands.*;
-
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
@@ -11,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import mydraw.drawables.*;
 
 public class Draw {
     private final DrawGUIs window;
@@ -116,10 +116,10 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawRectangle(Point upper_left, Point lower_right) {
-        final RectangleCommand cmd = new RectangleCommand(upper_left, lower_right, window, window.getColor());
+        final RectangleDrawable cmd = new RectangleDrawable(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
     }
 
     /**
@@ -129,10 +129,10 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawOval(Point upper_left, Point lower_right) {
-        final OvalCommand cmd = new OvalCommand(upper_left, lower_right, window, window.getColor());
+        final OvalDrawable cmd = new OvalDrawable(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
     }
 
     /**
@@ -141,10 +141,10 @@ public class Draw {
      * @param points list of points
      */
     public void drawPolyLine(java.util.List<Point> points) {
-        final ScribbleCommand cmd = new ScribbleCommand(points, window, window.getColor());
+        final PolylineDrawable cmd = new PolylineDrawable(points, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
 
     }
 
@@ -155,7 +155,7 @@ public class Draw {
      * @param y y
      */
     public void drawLine(int x, int y) {
-        final LineCommand cmd = new LineCommand(x, y , window);
+        final LineDrawable cmd = new LineDrawable(x, y , window);
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
     }
@@ -166,10 +166,10 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawFilledRectangle(Point upper_left, Point lower_right) {
-        final FillRectCommand cmd = new FillRectCommand(upper_left, lower_right, window, window.getColor());
+        final FillRectDrawable cmd = new FillRectDrawable(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
     }
 
     /**
@@ -179,10 +179,10 @@ public class Draw {
      * @param lower_right bottom right corner
      */
     public void drawFilledOval(Point upper_left, Point lower_right) {
-        final FillOvalCommand cmd = new FillOvalCommand(upper_left, lower_right, window, window.getColor());
+        final FillOvalDrawable cmd = new FillOvalDrawable(upper_left, lower_right, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
     }
 
     /**
@@ -198,11 +198,11 @@ public class Draw {
      * Clears drawing panel by drawing a filled rectangle
      */
     public void clear() {
-        final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
+        final FillRectDrawable cmd = new FillRectDrawable(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
                 window, window.getDrawingPanel().getBackground());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
-        CommandQueue.add(cmd);
+        DrawableQueue.add(cmd);
     }
 
     /**
@@ -258,7 +258,7 @@ public class Draw {
 
         try (FileOutputStream fout = new FileOutputStream(fileName)) {
             try (ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-                oos.writeObject(CommandQueue.getQueue());
+                oos.writeObject(DrawableQueue.getQueue());
             } catch (IOException e) {
                 throw new TxtIOException();
             }
@@ -279,7 +279,7 @@ public class Draw {
     public void readText(String fileName) throws TxtIOException {
         try (FileInputStream fi = new FileInputStream(new File(fileName))) {
             try(ObjectInputStream oi = new ObjectInputStream(fi)){
-                CommandQueue.setQueue((List<Drawable>) oi.readObject());
+                DrawableQueue.setQueue((List<Drawable>) oi.readObject());
             } catch (ClassNotFoundException e) {
                 throw new TxtIOException();
             }
@@ -292,7 +292,7 @@ public class Draw {
      * Removes the last drawn element.
      */
     public void undo() {
-        CommandQueue.undo(window.getDrawingPanel().getGraphics());
+        DrawableQueue.undo(window.getDrawingPanel().getGraphics());
         window.getDrawingPanel().updateUI();
     }
 
@@ -300,7 +300,7 @@ public class Draw {
      * Inserts the last undone element.
      */
     public void redo() {
-        CommandQueue.redo(window.getDrawingPanel().getGraphics());
+        DrawableQueue.redo(window.getDrawingPanel().getGraphics());
         window.getDrawingPanel().updateUI();
     }
 
