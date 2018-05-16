@@ -11,6 +11,11 @@ import java.awt.Point;
  */
 public class FillRectCommand extends RectangleCommand {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public FillRectCommand(Point pressed, Point released, DrawGUIs window, Color color) {
         super(pressed, released, window, color);
     }
@@ -23,7 +28,7 @@ public class FillRectCommand extends RectangleCommand {
             g.setXORMode(color);
             g.setColor(window.getDrawingPanel().getBackground());
             g.fillRect(x, y, width, height);
-
+            
             window.getShapeManager().getCurrentDrawer().setLastx(-1);
             window.getShapeManager().getCurrentDrawer().setLasty(-1);
         }

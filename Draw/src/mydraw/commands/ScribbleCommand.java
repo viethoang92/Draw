@@ -2,6 +2,7 @@ package mydraw.commands;
 
 import mydraw.DrawGUIs;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.Serializable;
@@ -13,9 +14,16 @@ import java.util.List;
  */
 public class ScribbleCommand implements Drawable, Serializable {
 
-	private final List<Point> points;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    private final List<Point> points;
 
 	private final DrawGUIs window;
+	
+	private final Color color;
 
 	/**
 	 * Constructor.
@@ -23,7 +31,8 @@ public class ScribbleCommand implements Drawable, Serializable {
 	 * @param points
 	 *            points of the polyline.
 	 */
-	public ScribbleCommand(List<Point> points, DrawGUIs window) {
+	public ScribbleCommand(List<Point> points, DrawGUIs window, Color color) {
+	    this.color = color;
 		this.points = new ArrayList<>();
 		this.points.addAll(points);
 		this.window = window;
@@ -39,7 +48,7 @@ public class ScribbleCommand implements Drawable, Serializable {
 			y[i] = p.y;
 		}
 		g.setPaintMode();
-		g.setColor(window.getColor());
+		g.setColor(color);
 		g.drawPolyline(x, y, points.size());
 	}
 }

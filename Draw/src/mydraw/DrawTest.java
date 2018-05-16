@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +87,6 @@ final class DrawTest {
 
     @Test
     public void testSetBGColorException() {
-
         Assertions.assertThrows(ColorException.class, () -> {
             window.setBGColor("bla");
         });
@@ -111,13 +113,41 @@ final class DrawTest {
         for (int x = 0; x < image1.getWidth(); x++) {
             for (int y = 0; y < image1.getHeight(); y++) {
                 if (image1.getRGB(x, y) != image2.getRGB(x, y)) {
-
                     return false;
                 }
             }
         }
-
         return true;
+    }
+    
+    @Test
+    public void testUndoRedo() throws IOException, ColorException
+    {
+        window.setBGColor("blue");
+        window.clear();
+        window.drawOval(new Point(50, 50), new Point(200, 200));
+        Image undoTestImg = window.getDrawing();
+        window.writeImage(undoTestImg, "undoTestImg.png");
+        
+        window.setFGColor("red");
+        window.drawRectangle(new Point(100, 100), new Point(300, 300));
+        window.setFGColor("Green");
+        final List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
+        window.drawPolyLine(list);
+        Image redoTestImg = window.getDrawing();
+        window.writeImage(redoTestImg, "redoTestImg.png");
+        
+        window.undo();
+        window.undo();
+        Image undoImg = window.getDrawing();
+        assertTrue(compareImages((BufferedImage) undoImg, (BufferedImage) undoTestImg));
+        
+        window.redo();
+        window.redo();
+        Image redoImg = window.getDrawing();
+        assertTrue(compareImages((BufferedImage) redoImg, (BufferedImage) redoTestImg));
+        
+        
     }
 
 }

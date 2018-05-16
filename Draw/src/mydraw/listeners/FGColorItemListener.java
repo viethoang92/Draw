@@ -16,9 +16,6 @@ public class FGColorItemListener implements ItemListener {
     }
     @Override
     public void itemStateChanged(ItemEvent e) {
-
-
-
         final Color newColor = window.getColorMap().get(e.getItem());
         if (newColor != null) {
             window.setColor(newColor);

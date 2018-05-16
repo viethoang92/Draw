@@ -141,7 +141,7 @@ public class Draw {
      * @param points list of points
      */
     public void drawPolyLine(java.util.List<Point> points) {
-        final ScribbleCommand cmd = new ScribbleCommand(points, window);
+        final ScribbleCommand cmd = new ScribbleCommand(points, window, window.getColor());
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -200,7 +200,6 @@ public class Draw {
     public void clear() {
         final FillRectCommand cmd = new FillRectCommand(new Point(0, 0), new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
                 window, window.getDrawingPanel().getBackground());
-
         cmd.draw(window.getDrawingPanel().getGraphics());
         cmd.draw(window.getBufferedImage().createGraphics());
         CommandQueue.add(cmd);
@@ -234,7 +233,8 @@ public class Draw {
      * @throws IOException if an input or output expression occurred
      */
     public void writeImage(Image img, String filename) throws IOException {
-        ImageIO.write((RenderedImage) img, "PNG", new File(filename));
+        ImageIO.write((RenderedImage) img
+                , "PNG", new File(filename));
     }
 
     /**

@@ -11,6 +11,11 @@ import java.awt.Point;
  */
 public class OvalCommand extends RectangleCommand{
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public OvalCommand(Point pressed, Point released, DrawGUIs window, Color color) {
         super(pressed, released, window, color);
     }

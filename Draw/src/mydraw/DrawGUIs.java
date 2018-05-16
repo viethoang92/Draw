@@ -1,6 +1,5 @@
 package mydraw;
 
-import mydraw.commands.CommandQueue;
 import mydraw.listeners.BGColorItemListener;
 import mydraw.listeners.FGColorItemListener;
 import mydraw.listeners.ShapeDrawer;
@@ -9,18 +8,14 @@ import mydraw.listeners.ShapeManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -33,7 +28,7 @@ public class DrawGUIs extends JFrame {
     private BufferedImage bImg;
     private Color color;
     private DrawingPanel panel;
-    private final Map<String, Color> cm = new LinkedHashMap<>() {
+    private final Map<String, Color> cm = new LinkedHashMap<String, Color>() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -115,6 +110,7 @@ public class DrawGUIs extends JFrame {
             bgColor_chooser.add(enp.getKey());
         }
         bgColor_chooser.addItemListener(new BGColorItemListener(this));
+        bgColor_chooser.select("white");
 
 
         // Create buttons
@@ -122,7 +118,6 @@ public class DrawGUIs extends JFrame {
         final JButton auto = new JButton("Auto");
         final JButton undo = new JButton("Undo");
         final JButton redo = new JButton("Redo");
-
 
         JMenuItem quit = new JMenuItem("Quit");
         JMenuItem txtSave = new JMenuItem("Text speichern ...");
@@ -207,7 +202,7 @@ public class DrawGUIs extends JFrame {
         } else if (command.equals("save")) {
             try {
                 JFileChooser jfc = new JFileChooser();
-                int retVal = jfc.showSaveDialog(null);
+                int retVal = jfc.showSaveDialog(this);
                 if (retVal == JFileChooser.APPROVE_OPTION) {
                     File f = jfc.getSelectedFile();
                     String test = f.getAbsolutePath();

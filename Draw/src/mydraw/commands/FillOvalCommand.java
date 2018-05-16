@@ -8,6 +8,11 @@ import java.awt.Point;
 
 public class FillOvalCommand extends OvalCommand {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public FillOvalCommand(Point pressed, Point released, DrawGUIs window, Color color) {
         super(pressed, released, window, color);
     }
