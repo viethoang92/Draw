@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.io.Serializable;
 
+import mydraw.ColorManager;
 import mydraw.DrawGUIs;
 
 /**
@@ -12,7 +13,7 @@ import mydraw.DrawGUIs;
  */
 public class RectangleDrawable implements Drawable, Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	final DrawGUIs window;
@@ -68,7 +69,7 @@ public class RectangleDrawable implements Drawable, Serializable {
 		final String name = "rectangle";
 		final String pressed = this.pressed.x + "," + this.pressed.y;
 		final String released = this.released.x + "," + this.released.y;
-		final String color = this.color.toString();
+		final String color = ColorManager.getColor(this.color);
 		return name + ':' + pressed + ':' + released + ':' + color;
 	}
 }

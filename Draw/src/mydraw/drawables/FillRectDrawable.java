@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import mydraw.ColorManager;
 import mydraw.DrawGUIs;
 
 /**
@@ -12,7 +13,7 @@ import mydraw.DrawGUIs;
 public class FillRectDrawable extends RectangleDrawable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -41,7 +42,7 @@ public class FillRectDrawable extends RectangleDrawable {
 		final String name = "filledRectangle";
 		final String pressed = this.pressed.x + "," + this.pressed.y;
 		final String released = this.released.x + "," + this.released.y;
-		final String color = this.color.toString();
+		final String color = ColorManager.getColor(this.color);
 		return name + ':' + pressed + ':' + released + ':' + color;
 	}
 }

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import mydraw.ColorManager;
 import mydraw.DrawGUIs;
 
 /**
@@ -15,7 +16,7 @@ import mydraw.DrawGUIs;
 public class PolylineDrawable implements Drawable, Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -55,10 +56,10 @@ public class PolylineDrawable implements Drawable, Serializable {
 	@Override
 	public String toString() {
 		final String name = "polyline";
-		final String color = this.color.toString();
+		final String color = ColorManager.getColor(this.color);
 		String points = "";
 		for (final Point p : this.points) {
-			points += ';' + p.x + "," + p.y;
+			points += ";" + p.x + "," + p.y;
 		}
 		final String result = name + ':' + points.substring(1) + ':' + color;
 		return result;

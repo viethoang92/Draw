@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import mydraw.ColorManager;
 import mydraw.DrawGUIs;
 
 public class FillOvalDrawable extends OvalDrawable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -39,7 +40,7 @@ public class FillOvalDrawable extends OvalDrawable {
 		final String name = "filledOval";
 		final String pressed = this.pressed.x + "," + this.pressed.y;
 		final String released = this.released.x + "," + this.released.y;
-		final String color = this.color.toString();
+		final String color = ColorManager.getColor(this.color);
 		return name + ':' + pressed + ':' + released + ':' + color;
 	}
 }
