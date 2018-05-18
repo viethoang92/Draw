@@ -1,62 +1,52 @@
 package mydraw.drawables;
 
-import mydraw.DrawGUIs;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.io.Serializable;
+
+import mydraw.ColorManager;
 
 /**
  * Command to draw rectangles.
  */
-public class RectangleDrawable implements Drawable, Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    final DrawGUIs window;
-    final Color color;
-    final Point pressed;
-    final Point released;
-    final int x;
-    final int y;
-    final int width;
-    final int height;
+public class RectangleDrawable implements Drawable {
+	final Color color;
+	final Point pressed;
+	final Point released;
 
-    /**
-     * Constructor.
-     *
-     * @param pressed  point where mouse was pressed
-     * @param released point where mouse was released
-     */
-    public RectangleDrawable(Point pressed, Point released, DrawGUIs window, Color color) {
-        this.pressed = pressed;
-        this.released = released;
-        this.window = window;
-        this.color = color;
-        x = Math.min(pressed.x, released.x);
-        y = Math.min(pressed.y, released.y);
-        width = Math.abs(pressed.x - released.x);
-        height = Math.abs(pressed.y - released.y);
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param pressed
+	 *            point where mouse was pressed
+	 * @param released
+	 *            point where mouse was released
+	 * @param color
+	 *            color of this shape
+	 */
+	public RectangleDrawable(Point pressed, Point released, Color color) {
+		this.pressed = pressed;
+		this.released = released;
+		this.color = color;
+	}
 
-    @Override
-    public void draw(Graphics g) {
+	@Override
+	public void draw(Graphics g) {
+		final int x = Math.min(pressed.x, released.x);
+		final int y = Math.min(pressed.y, released.y);
+		final int w = Math.abs(pressed.x - released.x);
+		final int h = Math.abs(pressed.y - released.y);
+		g.setColor(color);
+		g.drawRect(x, y, w, h);
+	}
 
-        if (window.getShapeManager().getCurrentDrawer().getLastx() != -1) {
-            // first undraw a rubber rect
-            g.setXORMode(color);
-            g.setColor(window.getDrawingPanel().getBackground());
-            g.drawRect(x, y, width, height);
+	@Override
+	public String toString() {
+		final String name = "rectangle";
+		final String pressed = this.pressed.x + "," + this.pressed.y;
+		final String released = this.released.x + "," + this.released.y;
+		final String color = ColorManager.getColor(this.color);
+		return name + ':' + pressed + ':' + released + ':' + color;
+	}
 
-
-        }
-
-            g.setPaintMode();
-            g.setColor(color);
-            g.drawRect(x, y, width, height);
-
-
-    }
 }

@@ -3,7 +3,9 @@ package mydraw;
 /**
  * Exception for invalid colors.
  */
-class ColorException extends Exception {
+public class ColorException extends Exception {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor.
