@@ -1,510 +1,392 @@
 package mydraw;
-//This example is from _Java Examples in a Nutshell_. (http://www.oreilly.com)
 
-//Copyright (c) 1997 by David Flanagan
-//This example is provided WITHOUT ANY WARRANTY either expressed or implied.
-//You may study, use, modify, and distribute it for non-commercial purposes.
-//For any commercial use, see http://www.davidflanagan.com/javaexamples
-
-// *** modified by PTP 03/2018
-// *** minimal changes from AWT to Swing -> replace elements/classes
-// *** behavior is similiar but not equal ! Why?
-
-import java.applet.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.image.RenderedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*; //++
 
-/** The application class. Processes high-level commands sent by GUI */
-/*
- * Zeigt Fenster an. Führt Befehle der Buttons aus Kooperationspartner: DrawGUIs
- */
+import mydraw.drawables.Drawable;
+import mydraw.drawables.DrawableQueue;
+import mydraw.drawables.FillOvalDrawable;
+import mydraw.drawables.FillRectDrawable;
+import mydraw.drawables.LineDrawable;
+import mydraw.drawables.OvalDrawable;
+import mydraw.drawables.PolylineDrawable;
+import mydraw.drawables.RectangleDrawable;
+
 public class Draw {
-	/** main entry point. Just create an instance of this application class */
+	private final DrawGUIs window;
+
+	public Draw() {
+		this.window = new DrawGUIs(this);
+	}
+
 	public static void main(String[] args) {
 		new Draw();
 	}
 
-	/** Application constructor: create an instance of our GUI class */
-	public Draw() {
-		window = new DrawGUIs(this);
-	}
-
-	protected JFrame window; // chg
-
-	/** This is the application method that processes commands sent by the GUI */
-	public void doCommand(String command) {
-		if (command.equals("clear")) { // clear the GUI window
-			// It would be more modular to include this functionality in the GUI
-			// class itself. But for demonstration purposes, we do it here.
-			Graphics g = window.getGraphics();
-			g.setColor(window.getBackground());
-			g.fillRect(0, 0, window.getSize().width, window.getSize().height);
-		} else if (command.equals("quit")) { // quit the application
-			window.dispose(); // close the GUI
-			System.exit(0); // and exit.
-		}
-	}
-}
-
-/** This class implements the GUI for our application */
-/*
- * Definiert das Fenster und ist für die Gestaltung zuständig.
- * Kooperationspartner: JFrame, Draw, DrawActionListener, ShapeManager,
- * ColorItemListener, WindowAdapter
- */
-class DrawGUIs extends JFrame {
-
-	private static final long serialVersionUID = 1L;
-
-	Draw app; // A reference to the application, to send commands to.
-	Color color;
-
 	/**
-	 * The GUI constructor does all the work of creating the GUI and setting up
-	 * event listeners. Note the use of local and anonymous classes.
-	 */
-	public DrawGUIs(Draw application) {
-		super("Draw"); // Create the window
-		app = application; // Remember the application reference
-		color = Color.black; // the current drawing color
-
-		// selector for drawing modes
-		Choice shape_chooser = new Choice();
-		shape_chooser.add("Scribble");
-		shape_chooser.add("Rectangle");
-		shape_chooser.add("Oval");
-
-		// selector for drawing colors
-		Choice color_chooser = new Choice();
-		color_chooser.add("Black");
-		color_chooser.add("Green");
-		color_chooser.add("Red");
-		color_chooser.add("Blue");
-
-		// Create two buttons
-		JButton clear = new JButton("Clear");
-		JButton quit = new JButton("Quit");
-
-		// Set a LayoutManager, and add the choosers and buttons to the window.
-		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-		this.add(new JLabel("Shape:"));
-		this.add(shape_chooser);
-		this.add(new JLabel("Color:"));
-		this.add(color_chooser);
-		this.add(clear);
-		this.add(quit);
-
-		// Here's a local class used for action listeners for the buttons
-		/*
-		 * Listener für die Buttons. Kooperationspartner: ActionListener
-		 */
-		class DrawActionListener implements ActionListener {
-			private String command;
-
-			public DrawActionListener(String cmd) {
-				command = cmd;
-			}
-
-			public void actionPerformed(ActionEvent e) {
-				app.doCommand(command);
-			}
-		}
-
-		// Define action listener adapters that connect the buttons to the app
-		clear.addActionListener(new DrawActionListener("clear"));
-		quit.addActionListener(new DrawActionListener("quit"));
-
-		// this class determines how mouse events are to be interpreted,
-		// depending on the shape mode currently set
-		/*
-		 * Interpretiert die Mausaktionen entsprechend der ausgewählten Zeichenformen.
-		 * Kooperationspartner: ShapeDrawer, ItemListener, DrawGUIs, ScribbleDrawer,
-		 * RectangleDrawer, OvalDrawer
-		 */
-		class ShapeManager implements ItemListener {
-			DrawGUIs gui;
-
-			abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
-				public void mouseMoved(MouseEvent e) {
-					/* ignore */ }
-			}
-
-			// if this class is active, the mouse is interpreted as a pen
-			/*
-			 * Interpretiert die Mausaktionen als Stift. Kooperationspartner: ShapeDrawer
-			 */
-			class ScribbleDrawer extends ShapeDrawer {
-				int lastx, lasty;
-
-				public void mousePressed(MouseEvent e) {
-					lastx = e.getX();
-					lasty = e.getY();
-				}
-
-				public void mouseDragged(MouseEvent e) {
-					Graphics g = gui.getGraphics();
-					int x = e.getX(), y = e.getY();
-					g.setColor(gui.color);
-					g.setPaintMode();
-					g.drawLine(lastx, lasty, x, y);
-					lastx = x;
-					lasty = y;
-				}
-			}
-
-			// if this class is active, rectangles are drawn
-			class RectangleDrawer extends ShapeDrawer {
-				int pressx, pressy;
-				int lastx = -1, lasty = -1;
-
-				// mouse pressed => fix first corner of rectangle
-				public void mousePressed(MouseEvent e) {
-					pressx = e.getX();
-					pressy = e.getY();
-				}
-
-				// mouse released => fix second corner of rectangle
-				// and draw the resulting shape
-				public void mouseReleased(MouseEvent e) {
-					Graphics g = gui.getGraphics();
-					if (lastx != -1) {
-						// first undraw a rubber rect
-						g.setXORMode(gui.color);
-						g.setColor(gui.getBackground());
-						doDraw(pressx, pressy, lastx, lasty, g);
-						lastx = -1;
-						lasty = -1;
-					}
-					// these commands finish the rubberband mode
-					g.setPaintMode();
-					g.setColor(gui.color);
-					// draw the finel rectangle
-					doDraw(pressx, pressy, e.getX(), e.getY(), g);
-				}
-
-				// mouse released => temporarily set second corner of rectangle
-				// draw the resulting shape in "rubber-band mode"
-				public void mouseDragged(MouseEvent e) {
-					Graphics g = gui.getGraphics();
-					// these commands set the rubberband mode
-					g.setXORMode(gui.color);
-					g.setColor(gui.getBackground());
-					if (lastx != -1) {
-						// first undraw previous rubber rect
-						doDraw(pressx, pressy, lastx, lasty, g);
-
-					}
-					lastx = e.getX();
-					lasty = e.getY();
-					// draw new rubber rect
-					doDraw(pressx, pressy, lastx, lasty, g);
-				}
-
-				public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-					// calculate upperleft and width/height of rectangle
-					int x = Math.min(x0, x1);
-					int y = Math.min(y0, y1);
-					int w = Math.abs(x1 - x0);
-					int h = Math.abs(y1 - y0);
-					// draw rectangle
-					g.drawRect(x, y, w, h);
-				}
-			}
-
-			// if this class is active, ovals are drawn
-			class OvalDrawer extends RectangleDrawer {
-				public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-					int x = Math.min(x0, x1);
-					int y = Math.min(y0, y1);
-					int w = Math.abs(x1 - x0);
-					int h = Math.abs(y1 - y0);
-					// draw oval instead of rectangle
-					g.drawOval(x, y, w, h);
-				}
-			}
-
-			ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
-			RectangleDrawer rectDrawer = new RectangleDrawer();
-			OvalDrawer ovalDrawer = new OvalDrawer();
-			ShapeDrawer currentDrawer;
-
-			public ShapeManager(DrawGUIs itsGui) {
-				gui = itsGui;
-				// default: scribble mode
-				currentDrawer = scribbleDrawer;
-				// activate scribble drawer
-				gui.addMouseListener(currentDrawer);
-				gui.addMouseMotionListener(currentDrawer);
-			}
-
-			// reset the shape drawer
-			public void setCurrentDrawer(ShapeDrawer l) {
-				if (currentDrawer == l)
-					return;
-
-				// deactivate previous drawer
-				gui.removeMouseListener(currentDrawer);
-				gui.removeMouseMotionListener(currentDrawer);
-				// activate new drawer
-				currentDrawer = l;
-				gui.addMouseListener(currentDrawer);
-				gui.addMouseMotionListener(currentDrawer);
-			}
-
-			// user selected new shape => reset the shape mode
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getItem().equals("Scribble")) {
-					setCurrentDrawer(scribbleDrawer);
-				} else if (e.getItem().equals("Rectangle")) {
-					setCurrentDrawer(rectDrawer);
-				} else if (e.getItem().equals("Oval")) {
-					setCurrentDrawer(ovalDrawer);
-				}
-			}
-		}
-
-		shape_chooser.addItemListener(new ShapeManager(this));
-
-		/*
-		 * Setzt die Farbe der neuen Zeichnungen entsprechend der Auswahl.
-		 * Kooperationspartner: ItemListener
-		 */
-		class ColorItemListener implements ItemListener {
-
-			// user selected new color => store new color in DrawGUIs
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getItem().equals("Black")) {
-					color = Color.black;
-				} else if (e.getItem().equals("Green")) {
-					color = Color.green;
-				} else if (e.getItem().equals("Red")) {
-					color = Color.red;
-				} else if (e.getItem().equals("Blue")) {
-					color = Color.blue;
-				}
-			}
-		}
-
-		color_chooser.addItemListener(new ColorItemListener());
-
-		// Handle the window close request similarly
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				app.doCommand("quit");
-			}
-		});
-
-		// Finally, set the size of the window, and pop it up
-		this.setSize(500, 400);
-		this.setBackground(Color.white);
-		// this.show(); //chg
-		this.setVisible(true); // ++
-	}
-
-	/**
-	 * Gibt die aktuelle Zeichenfarbe zurück.
-	 * 
-	 * @return aktuelle Zeichenfarbe
+	 * Returns current drawing color.
+	 *
+	 * @return current drawing color
 	 */
 	public String getFGColor() {
-		return color.toString();
+		return ColorManager.getColor(window.getColor());
 	}
 
 	/**
-	 * Setzt die aktuelle Zeichenfarbe.
-	 * 
+	 * Sets foreground color.
+	 *
 	 * @param new_color
-	 *            neue Zeichenfarbe
+	 *            new color to set
 	 * @throws ColorException
-	 *             ungültige Farbe
+	 *             if color is not in Choice
 	 */
 	public void setFGColor(String new_color) throws ColorException {
-		switch (new_color.toLowerCase()) {
-		case "black":
-			color = Color.black;
-			break;
-		case "green":
-			color = Color.green;
-			break;
-		case "red":
-			color = Color.red;
-			break;
-		case "blue":
-			color = Color.blue;
-			break;
-		default:
+		final Color color = ColorManager.getColor(new_color.toLowerCase());
+		if (color != null) {
+			window.setColor(color);
+		} else
 			throw new ColorException();
-		}
 	}
 
 	/**
-	 * Gibt die Breite des Fensters zurück.
-	 * 
-	 * @return Breite des Fensters
+	 * Returns the width of the window.
+	 *
+	 * @return width
 	 */
 	public int getWidth() {
-		return getSize().width;
+		return window.getSize().width;
 	}
 
 	/**
-	 * Gibt die Höhe des Fensters zurück.
-	 * 
-	 * @return Höhe des Fensters
+	 * Returns the height of the window.
+	 *
+	 * @return height
 	 */
 	public int getHeight() {
-		return getSize().height;
+		return window.getSize().height;
 	}
 
 	/**
-	 * Setzt die Breite des Fensters.
-	 * 
-	 * @param width
-	 *            neue Breite des Fensters
-	 */
-	public void setWidth(int width) {
-		setSize(width, getHeight());
-	}
-
-	/**
-	 * Setzt die Höhe des Fensters.
-	 * 
+	 * Sets the height of the window.
+	 *
 	 * @param height
-	 *            neue Höhe des Fensters
+	 *            new height
 	 */
 	public void setHeight(int height) {
-		setSize(getWidth(), height);
+		window.setSize(window.getSize().width, height);
 	}
 
 	/**
-	 * Setzt die Hintergrundfarbe des Fensters.
-	 * 
+	 * Sets the width of the window.
+	 *
+	 * @param width
+	 *            new width
+	 */
+	public void setWidth(int width) {
+		window.setSize(width, window.getSize().height);
+	}
+
+	/**
+	 * Sets background color
+	 *
 	 * @param new_color
-	 *            neue Hintergrundfarbe
+	 *            new background color
 	 * @throws ColorException
-	 *             ungültige Farbe
+	 *             invalid color
 	 */
 	public void setBGColor(String new_color) throws ColorException {
-		Color color;
-		switch (new_color.toLowerCase()) {
-		case "black":
-			color = Color.black;
-			break;
-		case "green":
-			color = Color.green;
-			break;
-		case "red":
-			color = Color.red;
-			break;
-		case "blue":
-			color = Color.blue;
-			break;
-		case "white":
-			color = Color.white;
-			break;
-		default:
+		final Color color = ColorManager.getColor(new_color.toLowerCase());
+		if (color != null) {
+			window.getDrawingPanel().setBackground(color);
+
+		} else
 			throw new ColorException();
-		}
-		setBackground(color);
 	}
 
 	/**
-	 * Gibt die Hintergrundfarbe des Fensters zurück.
-	 * 
-	 * @return Hintergrundfarbe des Fensters
+	 * Returns the background color of the window.
+	 *
+	 * @return background color
 	 */
 	public String getBGColor() {
-		return getBackground().toString();
+
+		return ColorManager.getColor(window.getDrawingPanel().getBackground());
 	}
 
 	/**
-	 * Zeichnet ein Recheck.
-	 * 
+	 * Draws a rectangle.
+	 *
 	 * @param upper_left
-	 *            linke, obere Ecke
+	 *            top left corner
 	 * @param lower_right
-	 *            rechte, untere Ecke
+	 *            bottom right corner
 	 */
 	public void drawRectangle(Point upper_left, Point lower_right) {
-		Graphics g = getGraphics();
-		int width = lower_right.x - upper_left.x;
-		int height = lower_right.y - upper_left.y;
-		g.drawRect(upper_left.x, upper_left.y, width, height);
+		final Drawable cmd = new RectangleDrawable(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
 	}
 
 	/**
-	 * Zeichnet ein Oval.
-	 * 
+	 * Draws an oval.
+	 *
 	 * @param upper_left
-	 *            linke, obere Ecke
+	 *            top left corner
 	 * @param lower_right
-	 *            rechte, untere Ecke
+	 *            bottom right corner
 	 */
 	public void drawOval(Point upper_left, Point lower_right) {
-		Graphics g = getGraphics();
-		int width = lower_right.x - upper_left.x;
-		int height = lower_right.y - upper_left.y;
-		g.drawOval(upper_left.x, upper_left.y, width, height);
+		final Drawable cmd = new OvalDrawable(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
 	}
 
 	/**
-	 * Zeichnet eine Polylinie
-	 * 
+	 * Draws a polyline.
+	 *
 	 * @param points
-	 *            Liste der Punkte
+	 *            list of points
 	 */
 	public void drawPolyLine(java.util.List<Point> points) {
-		int[] x = new int[points.size()];
-		int[] y = new int[points.size()];
-		for (int i = 0; i < points.size(); i++) {
-			Point p = points.get(i);
-			x[i] = p.x;
-			y[i] = p.y;
-		}
-		Graphics g = getGraphics();
-		g.drawPolyline(x, y, points.size());
+		final Drawable cmd = new PolylineDrawable(points, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
+
 	}
 
 	/**
-	 * Gibt die Zeichnung zurück.
-	 * 
-	 * @return Zeichnung
+	 * Draws a polyline.
+	 *
+	 * @param x
+	 *            x
+	 * @param y
+	 *            y
+	 */
+	public void drawLine(Point pressed, Point released) {
+		final Drawable cmd = new LineDrawable(pressed, released, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
+	}
+
+	/**
+	 * Draws a filled rectangle.
+	 *
+	 * @param upper_left
+	 *            top left corner
+	 * @param lower_right
+	 *            bottom right corner
+	 */
+	public void drawFilledRectangle(Point upper_left, Point lower_right) {
+		final Drawable cmd = new FillRectDrawable(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
+	}
+
+	/**
+	 * Draws a filled oval.
+	 *
+	 * @param upper_left
+	 *            top left corner
+	 * @param lower_right
+	 *            bottom right corner
+	 */
+	public void drawFilledOval(Point upper_left, Point lower_right) {
+		final Drawable cmd = new FillOvalDrawable(upper_left, lower_right, window.getColor());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
+	}
+
+	/**
+	 * Returns the current drawing.
+	 *
+	 * @return drawing
 	 */
 	public Image getDrawing() {
-		return createImage(getWidth(), getHeight());
+		return window.getBufferedImage();
 	}
 
 	/**
-	 * Setzt die Zeichenfläche zurück.
+	 * Clears drawing panel by drawing a filled rectangle
 	 */
 	public void clear() {
-		Graphics g = getGraphics();
-		g.setColor(getBackground());
-		g.fillRect(0, 0, getWidth(), getHeight());
+		final Drawable cmd = new FillRectDrawable(new Point(0, 0),
+				new Point(window.getDrawingPanel().getWidth(), window.getDrawingPanel().getHeight()),
+				window.getDrawingPanel().getBackground());
+		cmd.draw(window.getDrawingPanel().getGraphics());
+		DrawableQueue.add(cmd);
 	}
 
 	/**
-	 * Zeichnet ein voreingestelltes Bild.
+	 * Draws a predefined image.
 	 */
 	public void autoDraw() {
-		// TODO autoDraw
+		// TODO add new functionality
+		try {
+			setBGColor("blue");
+			clear();
+			drawOval(new Point(50, 50), new Point(200, 200));
+			setFGColor("red");
+			drawRectangle(new Point(100, 100), new Point(300, 300));
+			setFGColor("Green");
+			final List<Point> list = Arrays.asList(new Point(50, 50), new Point(100, 150), new Point(80, 80));
+			drawPolyLine(list);
+		} catch (final ColorException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
-	 * Speichert ein Bild als Datei ab.
-	 * 
+	 * Exports an image.
+	 *
 	 * @param img
-	 *            abzuspeicherndes Bild
+	 *            image
 	 * @param filename
-	 *            Dateiname
+	 *            filename
 	 * @throws IOException
+	 *             if an input or output expression occurred
 	 */
 	public void writeImage(Image img, String filename) throws IOException {
-		// TODO writeImage
+		ImageIO.write((RenderedImage) img, "PNG", new File(filename));
+	}
+
+	/**
+	 * Reads an image.
+	 *
+	 * @param filename
+	 *            filename
+	 * @return Image image
+	 * @throws IOException
+	 *             if an input or output expression occurred
+	 */
+	public Image readImage(String filename) throws IOException {
+		return ImageIO.read(new File(filename));
+	}
+
+	public void writeText(String name) throws TxtIOException {
+		final File file = new File(name);
+		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+
+			for (final Drawable drawable : DrawableQueue.getQueue()) {
+				writer.write(drawable.toString());
+				writer.newLine();
+			}
+			writer.flush();
+		} catch (final IOException e) {
+			throw new TxtIOException();
+		}
+	}
+
+	public void readText(String name) throws TxtIOException {
+		final File file = new File(name);
+		try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			String line = null;
+			final List<Drawable> drawables = new ArrayList<>();
+			while ((line = reader.readLine()) != null) {
+				final String[] components = line.split(":");
+				final Drawable drawable;
+				switch (components[0]) {
+				case "polyline":
+					drawable = createDrawablePolyline(components);
+					break;
+				case "rectangle":
+					drawable = createDrawableRectangle(components);
+					break;
+				case "oval":
+					drawable = createDrawableOval(components);
+					break;
+				case "filledRectangle":
+					drawable = createDrawableFilledRect(components);
+					break;
+				case "filledOval":
+					drawable = createDrawableFilledOval(components);
+					break;
+				default:
+					throw new TxtIOException();
+				}
+				drawables.add(drawable);
+			}
+			clear();
+			for (final Drawable drawable : drawables) {
+				drawable.draw(window.getDrawingPanel().getGraphics());
+				DrawableQueue.add(drawable);
+			}
+		} catch (final IOException e) {
+			throw new TxtIOException();
+		}
+	}
+
+	private Drawable createDrawableFilledOval(String[] components) {
+		final Point pressed = createPoint(components[1]);
+		final Point released = createPoint(components[2]);
+		final Color color = ColorManager.getColor(components[3]);
+		return new FillOvalDrawable(pressed, released, color);
+	}
+
+	private Drawable createDrawableFilledRect(String[] components) {
+		final Point pressed = createPoint(components[1]);
+		final Point released = createPoint(components[2]);
+		final Color color = ColorManager.getColor(components[3]);
+		return new FillRectDrawable(pressed, released, color);
+	}
+
+	private Drawable createDrawableOval(String[] components) {
+		final Point pressed = createPoint(components[1]);
+		final Point released = createPoint(components[2]);
+		final Color color = ColorManager.getColor(components[3]);
+		return new OvalDrawable(pressed, released, color);
+	}
+
+	private Drawable createDrawableRectangle(String[] components) {
+		final Point pressed = createPoint(components[1]);
+		final Point released = createPoint(components[2]);
+		final Color color = ColorManager.getColor(components[3]);
+		return new RectangleDrawable(pressed, released, color);
+	}
+
+	private PolylineDrawable createDrawablePolyline(String[] components) {
+		final String[] pointsStr = components[1].split(";");
+		final List<Point> points = new ArrayList<>();
+		for (final String point : pointsStr) {
+			points.add(createPoint(point));
+		}
+		final Color color = ColorManager.getColor(components[2]);
+		return new PolylineDrawable(points, color);
+	}
+
+	private Point createPoint(String pointStr) {
+		final String[] coords = pointStr.split(",");
+		final int x = Integer.parseInt(coords[0]);
+		final int y = Integer.parseInt(coords[1]);
+		return new Point(x, y);
+	}
+
+	/**
+	 * Removes the last drawn element.
+	 */
+	public void undo() {
+		DrawableQueue.undo(window.getDrawingPanel().getGraphics());
+		window.getDrawingPanel().updateUI();
+	}
+
+	/**
+	 * Inserts the last undone element.
+	 */
+	public void redo() {
+		DrawableQueue.redo(window.getDrawingPanel().getGraphics());
+		window.getDrawingPanel().updateUI();
 	}
 }
